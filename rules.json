@@ -1,0 +1,221 @@
+{
+  "$schema": "https://raw.githubusercontent.com/a-ghorbani/pocketpal-device-rules/main/schema/rules.v1.schema.json",
+  "schema_version": "1.0.0-draft",
+  "rules_version": "2026-05-25.1",
+  "generated_at": "2026-05-25T00:00:00Z",
+  "notes": "FOU-99 v1 sketch — classifier only. Per-tier `candidates` arrays intentionally empty; that's a separate derivation from bench+Turso. Many SoC entries seeded from Turso top-60 Build.HARDWARE codenames (~70% submission coverage). Entries marked `?` need bench validation.",
+
+  "classifier": {
+    "ram_bands": [
+      { "id": "lt-4",    "max_bytes": 4294967296,    "label": "< 4 GiB" },
+      { "id": "4-6",     "max_bytes": 6442450944,    "label": "4-6 GiB" },
+      { "id": "6-8",     "max_bytes": 8589934592,    "label": "6-8 GiB" },
+      { "id": "8-12",    "max_bytes": 12884901888,   "label": "8-12 GiB" },
+      { "id": "12-plus", "max_bytes": null,          "label": "12+ GiB" }
+    ],
+
+    "soc_classes": ["budget", "mid", "flagship"],
+
+    "_comment_layer_1": "Layer 1: Build.SOC_MODEL (Android 12+ / API 31+). Case-insensitive exact match. This is the cleanest signal — covers ~80% of the active install base directly.",
+    "soc_model_to_class": {
+      "SM8750":    "flagship",
+      "SM8650":    "flagship",
+      "SM8635":    "flagship",
+      "SM8550":    "flagship",
+      "SM8475":    "flagship",
+      "SM8450":    "flagship",
+      "SM8350":    "flagship",
+      "SM8250":    "flagship",
+      "SM8150":    "flagship",
+      "SM7475-AB": "mid",
+      "SM7435":    "mid",
+      "SM7325":    "mid",
+      "SM7250":    "mid",
+      "SM7225":    "mid",
+      "SM6450":    "budget",
+      "SM6375":    "budget",
+      "SM6225":    "budget",
+      "SM4350":    "budget",
+
+      "MT6993":    "flagship",
+      "MT6991":    "flagship",
+      "MT6989":    "flagship",
+      "MT6985":    "flagship",
+      "MT6983":    "flagship",
+      "MT6896":    "flagship",
+      "MT6886":    "flagship",
+      "MT6877":    "mid",
+      "MT6875":    "mid",
+      "MT6855":    "mid",
+      "MT6853":    "budget",
+      "MT6833":    "budget",
+      "MT6789":    "budget",
+      "MT6769":    "budget",
+
+      "s5e9945":   "flagship",
+      "s5e9935":   "flagship",
+      "s5e9925":   "flagship",
+      "s5e9855":   "mid",
+      "s5e8855":   "mid",
+      "s5e8845":   "mid",
+      "s5e8835":   "mid",
+      "s5e8825":   "mid",
+
+      "Tensor":    "mid",
+      "Tensor G2": "mid",
+      "Tensor G3": "flagship",
+      "Tensor G4": "flagship",
+      "Tensor G5": "flagship"
+    },
+
+    "_comment_layer_2": "Layer 2: Build.HARDWARE codename — fallback for Android < 12. Seeded from Turso top-60 codenames. Some MTK k##### codenames need validation against bench (marked).",
+    "hardware_to_class": {
+      "sun":         "flagship",
+      "pineapple":   "flagship",
+      "kalama":      "flagship",
+      "taro":        "flagship",
+      "lahaina":     "flagship",
+      "kona":        "flagship",
+      "msmnile":     "flagship",
+      "sdm845":      "flagship",
+
+      "husky":       "flagship",
+      "tokay":       "flagship",
+      "shiba":       "flagship",
+      "komodo":      "flagship",
+      "caiman":      "flagship",
+      "akita":       "flagship",
+      "mustang":     "flagship",
+      "blazer":      "flagship",
+
+      "s5e9945":     "flagship",
+      "s5e9925":     "flagship",
+      "exynos2100":  "flagship",
+      "exynos990":   "flagship",
+
+      "k6991v1_64":  "flagship",
+      "k6989v1_64":  "flagship",
+      "k6993v1_64":  "flagship",
+
+      "houji":       "flagship",
+      "duchamp":     "flagship",
+      "rothko":      "flagship",
+      "canoe":       "flagship",
+      "rodin":       "flagship",
+      "peridot":     "flagship",
+      "zircon":      "flagship",
+      "crow":        "flagship",
+
+      "holi":        "mid",
+      "lito":        "mid",
+      "oriole":      "mid",
+      "cheetah":     "mid",
+      "bluejay":     "mid",
+      "panther":     "mid",
+      "lynx":        "mid",
+      "raven":       "mid",
+      "barbet":      "mid",
+      "tegu":        "mid",
+
+      "s5e8835":     "mid",
+      "s5e8855":     "mid",
+      "s5e8845":     "mid",
+      "s5e8825":     "mid",
+
+      "a34x":        "mid",
+      "marble":      "mid",
+      "garnet":      "mid",
+      "vayu":        "mid",
+      "sweet":       "mid",
+      "pipa":        "mid",
+      "Spacewar":    "mid",
+      "volcano":     "mid",
+      "parrot":      "mid",
+      "cancunf":     "mid",
+      "bangkk":      "mid",
+
+      "bengal":      "budget",
+      "a32":         "budget",
+      "a15":         "budget",
+      "rosemary":    "budget"
+    },
+
+    "_comment_layer_3": "Layer 3: CPU heuristic — runs only when Layer 1+2 miss. Rules evaluated top-to-bottom, first match wins. Anchored on llama.cpp's actual dispatch signals (i8mm/dotprod) and on big-core clock as a thermal/silicon-class proxy.",
+    "cpu_heuristic": {
+      "rules": [
+        {
+          "match": { "features_any": ["i8mm"] },
+          "class": "flagship",
+          "rationale": "ARMv8.6+/v9 chips with i8mm are 2022+ flagship-class; llama.cpp uses i8mm kernels here"
+        },
+        {
+          "match": { "features_any": ["sve2"] },
+          "class": "flagship",
+          "rationale": "SVE2 implies ARMv9 — flagship silicon"
+        },
+        {
+          "match": { "max_freq_mhz_min": 3000 },
+          "class": "flagship",
+          "rationale": ">= 3.0 GHz big-core sustained clock indicates flagship thermal/silicon class"
+        },
+        {
+          "match": { "features_all": ["dotprod"], "max_freq_mhz_min": 2400 },
+          "class": "mid",
+          "rationale": "ARMv8.2+ dotprod with capable clock = mid-range silicon"
+        },
+        {
+          "match": { "features_all": ["dotprod"] },
+          "class": "mid",
+          "rationale": "Has dotprod but lower clock — conservative mid (older big-A75/A76 phones)"
+        },
+        {
+          "match": {},
+          "class": "budget",
+          "rationale": "Default — pre-ARMv8.2 chip, or unable to read CPU info"
+        }
+      ]
+    },
+
+    "_comment_matrix": "Tier matrix: (ram_band × soc_class) → tier_id. Lookup unknowns: missing SoC class is treated as 'budget' for safety. Reported RAM ≪ nominal RAM (8 GiB phones report ~6.9-7.4 GiB; 12 GiB phones report ~10.3-11.3 GiB) — bands are tuned for reported values.",
+    "tier_matrix": [
+      { "ram_band": "lt-4",    "soc_class": "budget",   "tier": "low" },
+      { "ram_band": "lt-4",    "soc_class": "mid",      "tier": "low" },
+      { "ram_band": "lt-4",    "soc_class": "flagship", "tier": "low" },
+
+      { "ram_band": "4-6",     "soc_class": "budget",   "tier": "low" },
+      { "ram_band": "4-6",     "soc_class": "mid",      "tier": "low" },
+      { "ram_band": "4-6",     "soc_class": "flagship", "tier": "mid" },
+
+      { "ram_band": "6-8",     "soc_class": "budget",   "tier": "low" },
+      { "ram_band": "6-8",     "soc_class": "mid",      "tier": "mid" },
+      { "ram_band": "6-8",     "soc_class": "flagship", "tier": "high" },
+
+      { "ram_band": "8-12",    "soc_class": "budget",   "tier": "mid" },
+      { "ram_band": "8-12",    "soc_class": "mid",      "tier": "high" },
+      { "ram_band": "8-12",    "soc_class": "flagship", "tier": "flagship" },
+
+      { "ram_band": "12-plus", "soc_class": "budget",   "tier": "mid" },
+      { "ram_band": "12-plus", "soc_class": "mid",      "tier": "high" },
+      { "ram_band": "12-plus", "soc_class": "flagship", "tier": "flagship" }
+    ]
+  },
+
+  "tiers": {
+    "low": {
+      "description": "Entry tier — small models only. Reported < 6 GiB RAM, or budget/mid SoC at any RAM. Constrained by load-time peak memory.",
+      "candidates": []
+    },
+    "mid": {
+      "description": "Mid tier — 1-2B q4 comfortable. Mid-range silicon with 4-8 GiB reported RAM, or any tier with 8-12 GiB.",
+      "candidates": []
+    },
+    "high": {
+      "description": "High tier — 1-3B q4 comfortable, 4B borderline. Flagship silicon at 6-8 GiB, or mid silicon at 8-12 GiB. Bench anchor: Galaxy S23-class.",
+      "candidates": []
+    },
+    "flagship": {
+      "description": "Flagship tier — up to 4-7B q4. Flagship silicon at 8+ GiB. Bench anchor: POCO F7 Ultra / Galaxy S24 Ultra / OnePlus 13.",
+      "candidates": []
+    }
+  }
+}
