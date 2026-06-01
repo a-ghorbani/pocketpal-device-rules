@@ -2,11 +2,11 @@
   "$schema": "https://raw.githubusercontent.com/a-ghorbani/pocketpal-device-rules/main/schema/rules.v1.schema.json",
   "schema_version": "1.0.0-draft",
   "platform": "ios",
-  "rules_version": "2026-06-01.1",
+  "rules_version": "2026-06-01.2",
   "generated_at": "2026-06-01T00:00:00Z",
-  "notes": "FOU-99 v1 iOS — derived from the Android bench campaign (no iOS benches yet). iOS classifier is chip-based: utsname.machine → chip → soc_class → tier. Apple chip lineage is linear, so this collapses ~80 device identifiers onto ~15 chip names. RAM bands are tighter than Android because iOS reports physicalMemory close to nominal (no ~30% Android-style undercount).",
-  "_status": "v1-estimates",
-  "_status_note": "obs_tg_anchor values for iOS are EXTRAPOLATED from Android bench data on architecturally-equivalent SoCs (e.g. A18 Pro ≈ SD 8 Gen 5 → flagship anchor; A15/A16 ≈ SD 8 Gen 2 → high anchor; A14 ≈ Tensor G4 → mid anchor). An iOS bench campaign is pending and will replace these with measured values.",
+  "notes": "FOU-99 v1 iOS — chip-based classifier sourced from the authoritative pocketpal-website APPLE_DEVICES table; tier candidates extrapolated from the Android bench campaign (no iOS benches yet). iOS classifier: utsname.machine → chip → soc_class → tier. Apple chip lineage is linear, so this collapses ~85 device identifiers onto ~20 chip names. RAM bands are tighter than Android because iOS reports physicalMemory close to nominal (no ~30% Android-style undercount).",
+  "_status": "v1-estimates-on-candidates",
+  "_status_note": "Classifier (device_id_to_chip, chip_to_class, tier_matrix) is firm — sourced from pocketpal-website/lib/device-lookup.ts. obs_tg_estimate values are EXTRAPOLATED from Android bench data on architecturally-equivalent SoCs (e.g. A18 Pro / A19 Pro ≈ SD 8 Gen 5 → flagship anchor; A15/A16/M1 ≈ SD 8 Gen 2 → high anchor; A14 ≈ Tensor G4 → mid anchor). An iOS bench campaign is pending and will replace these with measured values.",
   "_quant_policy": "On iOS, Metal is the only accelerated backend (no Hexagon HTP). Metal does not give Q4_0 a meaningful PP fastpath over Q4_K_M, so Q4_K_M is primary across all tiers. Q4_0 may still be listed as an alternate where the file is published, mainly for users wanting smaller download / lower peak memory on tight devices.",
 
   "classifier": {
@@ -20,8 +20,15 @@
 
     "soc_classes": ["entry", "mid", "flagship"],
 
-    "_comment_layer_1": "Layer 1: utsname.machine device id → chip name. App reads sysctlbyname('hw.machine') on iOS (returns e.g. 'iPhone16,1') and looks up the chip. Includes all iPhone/iPad models supporting iOS 17+ (where PocketPal is expected to run).",
+    "_comment_layer_1": "Layer 1: utsname.machine device id → chip name. App reads sysctlbyname('hw.machine') on iOS (returns e.g. 'iPhone16,1') and looks up the chip. Sourced from the curated APPLE_DEVICES table in pocketpal-website/lib/device-lookup.ts (the same identifier-to-marketing-name map used by the benchmarks site). Covers iPhone 8 onward (A11+) and all iPads from iPad mini 5 / Air 3 onward.",
     "device_id_to_chip": {
+      "iPhone10,1":  "A11",
+      "iPhone10,2":  "A11",
+      "iPhone10,3":  "A11",
+      "iPhone10,4":  "A11",
+      "iPhone10,5":  "A11",
+      "iPhone10,6":  "A11",
+
       "iPhone11,2":  "A12",
       "iPhone11,4":  "A12",
       "iPhone11,6":  "A12",
@@ -98,15 +105,25 @@
       "iPad14,9":    "M2",
       "iPad14,10":   "M2",
       "iPad14,11":   "M2",
+      "iPad15,3":    "M3",
+      "iPad15,4":    "M3",
+      "iPad15,5":    "M3",
+      "iPad15,6":    "M3",
+      "iPad15,7":    "A16",
+      "iPad15,8":    "A16",
       "iPad16,1":    "A17 Pro",
       "iPad16,2":    "A17 Pro",
       "iPad16,3":    "M4",
       "iPad16,4":    "M4",
       "iPad16,5":    "M4",
-      "iPad16,6":    "M4"
+      "iPad16,6":    "M4",
+      "iPad17,1":    "M5",
+      "iPad17,2":    "M5",
+      "iPad17,3":    "M5",
+      "iPad17,4":    "M5"
     },
 
-    "_comment_layer_2": "Layer 2: chip name → soc_class. Apple chip generations cluster cleanly. A11-A14 are entry by today's LLM-on-mobile standards (≤4 GiB RAM, sub-A15 NE). A15/A16/A18-base are mid (mainline non-Pro flagship of their era, but no Pro-tier cores). A17 Pro / A18 Pro / A19 / A19 Pro / M-series are flagship.",
+    "_comment_layer_2": "Layer 2: chip name → soc_class. Apple chip generations cluster cleanly. A10-A13 are entry by today's LLM-on-mobile standards (≤4 GiB RAM, sub-A15 NE). A14/A15/A16/A18-base are mid (mainline non-Pro of their era, but no Pro-tier cores). A17 Pro / A18 Pro / A19 / A19 Pro / M-series are flagship.",
     "chip_to_class": {
       "A10":     "entry",
       "A11":     "entry",
@@ -126,7 +143,8 @@
       "M1":      "flagship",
       "M2":      "flagship",
       "M3":      "flagship",
-      "M4":      "flagship"
+      "M4":      "flagship",
+      "M5":      "flagship"
     },
 
     "_comment_layer_3": "Layer 3: unknown-chip fallback. When utsname.machine isn't in device_id_to_chip (new device released after this rules version), fall back to numeric heuristics on the model identifier. iPhone NN,M with NN ≥ 18 → flagship (we're well into A19+ era); iPad NN,M with NN ≥ 16 + RAM ≥ 8 GiB → flagship. Older unknowns fall back to 'mid' as a safe middle ground.",
