@@ -1,0 +1,244 @@
+{
+  "$schema": "https://raw.githubusercontent.com/a-ghorbani/pocketpal-device-rules/main/schema/rules.v1.schema.json",
+  "schema_version": "1.0.0-draft",
+  "platform": "ios",
+  "rules_version": "2026-06-01.1",
+  "generated_at": "2026-06-01T00:00:00Z",
+  "notes": "FOU-99 v1 iOS — derived from the Android bench campaign (no iOS benches yet). iOS classifier is chip-based: utsname.machine → chip → soc_class → tier. Apple chip lineage is linear, so this collapses ~80 device identifiers onto ~15 chip names. RAM bands are tighter than Android because iOS reports physicalMemory close to nominal (no ~30% Android-style undercount).",
+  "_status": "v1-estimates",
+  "_status_note": "obs_tg_anchor values for iOS are EXTRAPOLATED from Android bench data on architecturally-equivalent SoCs (e.g. A18 Pro ≈ SD 8 Gen 5 → flagship anchor; A15/A16 ≈ SD 8 Gen 2 → high anchor; A14 ≈ Tensor G4 → mid anchor). An iOS bench campaign is pending and will replace these with measured values.",
+  "_quant_policy": "On iOS, Metal is the only accelerated backend (no Hexagon HTP). Metal does not give Q4_0 a meaningful PP fastpath over Q4_K_M, so Q4_K_M is primary across all tiers. Q4_0 may still be listed as an alternate where the file is published, mainly for users wanting smaller download / lower peak memory on tight devices.",
+
+  "classifier": {
+    "ram_bands": [
+      { "id": "lt-3",    "max_bytes": 3221225472,    "label": "< 3 GiB" },
+      { "id": "3-4",     "max_bytes": 4294967296,    "label": "3-4 GiB" },
+      { "id": "4-6",     "max_bytes": 6442450944,    "label": "4-6 GiB" },
+      { "id": "6-8",     "max_bytes": 8589934592,    "label": "6-8 GiB" },
+      { "id": "8-plus",  "max_bytes": null,          "label": "8+ GiB" }
+    ],
+
+    "soc_classes": ["entry", "mid", "flagship"],
+
+    "_comment_layer_1": "Layer 1: utsname.machine device id → chip name. App reads sysctlbyname('hw.machine') on iOS (returns e.g. 'iPhone16,1') and looks up the chip. Includes all iPhone/iPad models supporting iOS 17+ (where PocketPal is expected to run).",
+    "device_id_to_chip": {
+      "iPhone11,2":  "A12",
+      "iPhone11,4":  "A12",
+      "iPhone11,6":  "A12",
+      "iPhone11,8":  "A12",
+
+      "iPhone12,1":  "A13",
+      "iPhone12,3":  "A13",
+      "iPhone12,5":  "A13",
+      "iPhone12,8":  "A13",
+
+      "iPhone13,1":  "A14",
+      "iPhone13,2":  "A14",
+      "iPhone13,3":  "A14",
+      "iPhone13,4":  "A14",
+
+      "iPhone14,2":  "A15",
+      "iPhone14,3":  "A15",
+      "iPhone14,4":  "A15",
+      "iPhone14,5":  "A15",
+      "iPhone14,6":  "A15",
+      "iPhone14,7":  "A15",
+      "iPhone14,8":  "A15",
+
+      "iPhone15,2":  "A16",
+      "iPhone15,3":  "A16",
+      "iPhone15,4":  "A16",
+      "iPhone15,5":  "A16",
+
+      "iPhone16,1":  "A17 Pro",
+      "iPhone16,2":  "A17 Pro",
+
+      "iPhone17,1":  "A18 Pro",
+      "iPhone17,2":  "A18 Pro",
+      "iPhone17,3":  "A18",
+      "iPhone17,4":  "A18",
+      "iPhone17,5":  "A18",
+
+      "iPhone18,1":  "A19 Pro",
+      "iPhone18,2":  "A19 Pro",
+      "iPhone18,3":  "A19",
+      "iPhone18,4":  "A19",
+
+      "iPad7,11":    "A10",
+      "iPad7,12":    "A10",
+      "iPad11,1":    "A12",
+      "iPad11,2":    "A12",
+      "iPad11,3":    "A12",
+      "iPad11,4":    "A12",
+      "iPad11,6":    "A13",
+      "iPad11,7":    "A13",
+      "iPad12,1":    "A13",
+      "iPad12,2":    "A13",
+      "iPad13,1":    "A14",
+      "iPad13,2":    "A14",
+      "iPad13,4":    "M1",
+      "iPad13,5":    "M1",
+      "iPad13,6":    "M1",
+      "iPad13,7":    "M1",
+      "iPad13,8":    "M1",
+      "iPad13,9":    "M1",
+      "iPad13,10":   "M1",
+      "iPad13,11":   "M1",
+      "iPad13,16":   "M1",
+      "iPad13,17":   "M1",
+      "iPad13,18":   "A14",
+      "iPad13,19":   "A14",
+      "iPad14,1":    "A15",
+      "iPad14,2":    "A15",
+      "iPad14,3":    "M2",
+      "iPad14,4":    "M2",
+      "iPad14,5":    "M2",
+      "iPad14,6":    "M2",
+      "iPad14,8":    "M2",
+      "iPad14,9":    "M2",
+      "iPad14,10":   "M2",
+      "iPad14,11":   "M2",
+      "iPad16,1":    "A17 Pro",
+      "iPad16,2":    "A17 Pro",
+      "iPad16,3":    "M4",
+      "iPad16,4":    "M4",
+      "iPad16,5":    "M4",
+      "iPad16,6":    "M4"
+    },
+
+    "_comment_layer_2": "Layer 2: chip name → soc_class. Apple chip generations cluster cleanly. A11-A14 are entry by today's LLM-on-mobile standards (≤4 GiB RAM, sub-A15 NE). A15/A16/A18-base are mid (mainline non-Pro flagship of their era, but no Pro-tier cores). A17 Pro / A18 Pro / A19 / A19 Pro / M-series are flagship.",
+    "chip_to_class": {
+      "A10":     "entry",
+      "A11":     "entry",
+      "A12":     "entry",
+      "A12X":    "entry",
+      "A12Z":    "entry",
+      "A13":     "entry",
+      "A14":     "mid",
+      "A15":     "mid",
+      "A16":     "mid",
+      "A17":     "mid",
+      "A17 Pro": "flagship",
+      "A18":     "mid",
+      "A18 Pro": "flagship",
+      "A19":     "flagship",
+      "A19 Pro": "flagship",
+      "M1":      "flagship",
+      "M2":      "flagship",
+      "M3":      "flagship",
+      "M4":      "flagship"
+    },
+
+    "_comment_layer_3": "Layer 3: unknown-chip fallback. When utsname.machine isn't in device_id_to_chip (new device released after this rules version), fall back to numeric heuristics on the model identifier. iPhone NN,M with NN ≥ 18 → flagship (we're well into A19+ era); iPad NN,M with NN ≥ 16 + RAM ≥ 8 GiB → flagship. Older unknowns fall back to 'mid' as a safe middle ground.",
+    "device_family_fallback": {
+      "rules": [
+        {
+          "match": { "id_prefix": "iPhone", "id_major_min": 18 },
+          "class": "flagship",
+          "rationale": "iPhone17+ in id terms = iPhone 16/17 line and later; assume A18 Pro-class or newer."
+        },
+        {
+          "match": { "id_prefix": "iPhone", "id_major_min": 15 },
+          "class": "mid",
+          "rationale": "iPhone15-17 id range covers A16/A17/A18 non-Pro; mid by default."
+        },
+        {
+          "match": { "id_prefix": "iPad", "id_major_min": 16, "min_ram_bytes": 8589934592 },
+          "class": "flagship",
+          "rationale": "Recent iPad with ≥8 GiB → M-series or A17 Pro class."
+        },
+        {
+          "match": { "id_prefix": "iPad" },
+          "class": "mid",
+          "rationale": "Unknown iPad — mid by default."
+        },
+        {
+          "match": {},
+          "class": "entry",
+          "rationale": "Default."
+        }
+      ]
+    },
+
+    "_comment_matrix": "Tier matrix: (ram_band × soc_class) → tier_id. Same 4 output tiers as Android. RAM bands are tighter than Android because iOS reports physicalMemory close to nominal.",
+    "tier_matrix": [
+      { "ram_band": "lt-3",    "soc_class": "entry",    "tier": "low" },
+      { "ram_band": "lt-3",    "soc_class": "mid",      "tier": "low" },
+      { "ram_band": "lt-3",    "soc_class": "flagship", "tier": "low" },
+
+      { "ram_band": "3-4",     "soc_class": "entry",    "tier": "low" },
+      { "ram_band": "3-4",     "soc_class": "mid",      "tier": "low" },
+      { "ram_band": "3-4",     "soc_class": "flagship", "tier": "mid" },
+
+      { "ram_band": "4-6",     "soc_class": "entry",    "tier": "low" },
+      { "ram_band": "4-6",     "soc_class": "mid",      "tier": "mid" },
+      { "ram_band": "4-6",     "soc_class": "flagship", "tier": "high" },
+
+      { "ram_band": "6-8",     "soc_class": "entry",    "tier": "mid" },
+      { "ram_band": "6-8",     "soc_class": "mid",      "tier": "high" },
+      { "ram_band": "6-8",     "soc_class": "flagship", "tier": "high" },
+
+      { "ram_band": "8-plus",  "soc_class": "entry",    "tier": "mid" },
+      { "ram_band": "8-plus",  "soc_class": "mid",      "tier": "high" },
+      { "ram_band": "8-plus",  "soc_class": "flagship", "tier": "flagship" }
+    ]
+  },
+
+  "tiers": {
+    "low": {
+      "description": "Entry tier — sub-1B models only. iOS anchors (estimated): A12/A13 iPhones with 3-4 GiB RAM (iPhone XR/XS/11/SE 2). Q4_K_M primary throughout; Metal has no Q4_0 fastpath that would justify swapping. iOS apps are killed aggressively above ~1.5 GB resident, so we stay strictly below that.",
+      "candidates": [
+        { "model": "qwen3-0.6b",   "quant": "q4_k_m", "hf_repo": "bartowski/Qwen_Qwen3-0.6B-GGUF", "hf_filename": "Qwen_Qwen3-0.6B-Q4_K_M.gguf", "min_ram_gb": 1.5, "obs_tg_estimate": 5.0, "anchor_basis": "android-low (helio-g88 cpu)" },
+        { "model": "lfm2.5-350m",  "quant": "q4_k_m", "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",      "hf_filename": "LFM2.5-350M-Q4_K_M.gguf",     "min_ram_gb": 1.0, "obs_tg_estimate": 7.0, "anchor_basis": "android-low (helio-g88 cpu)" },
+        { "model": "lfm2.5-350m",  "quant": "q8_0",   "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",      "hf_filename": "LFM2.5-350M-Q8_0.gguf",       "min_ram_gb": 1.0, "obs_tg_estimate": 6.5, "anchor_basis": "android-low (helio-g88 cpu)" }
+      ]
+    },
+    "mid": {
+      "description": "Mid tier — adds Bonsai-1.7B. iOS anchors (estimated): A14/A15 iPhones with 4-6 GiB RAM (iPhone 12/13/14 non-Pro). Cross-platform GGUF works; Bonsai-Q1_0 is supported by upstream llama.cpp b9204+ (PocketPal iOS llama.rn version must match).",
+      "candidates": [
+        { "model": "qwen3-0.6b",   "quant": "q4_k_m", "hf_repo": "bartowski/Qwen_Qwen3-0.6B-GGUF", "hf_filename": "Qwen_Qwen3-0.6B-Q4_K_M.gguf", "min_ram_gb": 1.5, "obs_tg_estimate": 15.0, "anchor_basis": "android-mid (tensor g4 cpu)" },
+        { "model": "lfm2.5-350m",  "quant": "q4_k_m", "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",      "hf_filename": "LFM2.5-350M-Q4_K_M.gguf",     "min_ram_gb": 1.0, "obs_tg_estimate": 30.0, "anchor_basis": "android-mid (tensor g4 cpu)" },
+        { "model": "lfm2.5-350m",  "quant": "q8_0",   "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",      "hf_filename": "LFM2.5-350M-Q8_0.gguf",       "min_ram_gb": 1.0, "obs_tg_estimate": 25.0, "anchor_basis": "android-mid (tensor g4 cpu)" },
+        { "model": "bonsai-1.7b",  "quant": "q1_0",   "hf_repo": "prism-ml/Bonsai-1.7B-gguf",      "hf_filename": "Bonsai-1.7B-Q1_0.gguf",       "min_ram_gb": 1.5, "obs_tg_estimate": 10.0, "anchor_basis": "android-mid (tensor g4 cpu)" }
+      ]
+    },
+    "high": {
+      "description": "High tier — adds SmolLM3-3B. iOS anchors (estimated): A16/A18 iPhones with 6-8 GiB RAM (iPhone 14 Pro / 15 / 16). Q4_K_M is primary (Metal Q4_K_M ≈ Q4_0); the listing intentionally omits Q4_0 to keep the shortlist focused.",
+      "candidates": [
+        { "model": "qwen3-0.6b",       "quant": "q4_k_m", "hf_repo": "bartowski/Qwen_Qwen3-0.6B-GGUF",          "hf_filename": "Qwen_Qwen3-0.6B-Q4_K_M.gguf",          "min_ram_gb": 1.5, "obs_tg_estimate": 32.0, "anchor_basis": "android-high (sd-8gen2 cpu)" },
+        { "model": "lfm2.5-350m",      "quant": "q4_k_m", "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",               "hf_filename": "LFM2.5-350M-Q4_K_M.gguf",              "min_ram_gb": 1.0, "obs_tg_estimate": 55.0, "anchor_basis": "android-high (sd-8gen2 cpu)" },
+        { "model": "lfm2.5-350m",      "quant": "q8_0",   "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",               "hf_filename": "LFM2.5-350M-Q8_0.gguf",                "min_ram_gb": 1.0, "obs_tg_estimate": 52.0, "anchor_basis": "android-high (sd-8gen2 cpu)" },
+        { "model": "bonsai-1.7b",      "quant": "q1_0",   "hf_repo": "prism-ml/Bonsai-1.7B-gguf",               "hf_filename": "Bonsai-1.7B-Q1_0.gguf",                "min_ram_gb": 1.5, "obs_tg_estimate": 14.0, "anchor_basis": "android-high (sd-8gen2 cpu)" },
+        { "model": "smollm3-3b",       "quant": "q4_k_m", "hf_repo": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF", "hf_filename": "HuggingFaceTB_SmolLM3-3B-Q4_K_M.gguf", "min_ram_gb": 3.0, "obs_tg_estimate": 12.0, "anchor_basis": "android-high (sd-8gen2 cpu)" }
+      ]
+    },
+    "flagship": {
+      "description": "Flagship tier — adds 3-4B mid/q4 models. iOS anchors (estimated): A17 Pro / A18 Pro / A19 / M-series with 8+ GiB RAM (iPhone 15 Pro+, iPad Pro M-series). Memory headroom is ample (M-series iPads have 8-32 GiB) but iOS jetsam is still a factor — peak load of 4-5 GB is realistic.",
+      "candidates": [
+        { "model": "qwen3-0.6b",            "quant": "q4_k_m", "hf_repo": "bartowski/Qwen_Qwen3-0.6B-GGUF",                                "hf_filename": "Qwen_Qwen3-0.6B-Q4_K_M.gguf",                              "min_ram_gb": 1.5, "obs_tg_estimate": 70.0,  "anchor_basis": "android-flagship (sd-8eg5 cpu)" },
+        { "model": "lfm2.5-350m",           "quant": "q4_k_m", "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",                                     "hf_filename": "LFM2.5-350M-Q4_K_M.gguf",                                  "min_ram_gb": 1.0, "obs_tg_estimate": 175.0, "anchor_basis": "android-flagship (sd-8eg5 cpu)" },
+        { "model": "bonsai-1.7b",           "quant": "q1_0",   "hf_repo": "prism-ml/Bonsai-1.7B-gguf",                                     "hf_filename": "Bonsai-1.7B-Q1_0.gguf",                                    "min_ram_gb": 1.5, "obs_tg_estimate": 25.0,  "anchor_basis": "android-flagship (sd-8eg5 cpu)" },
+        { "model": "smollm3-3b",            "quant": "q4_k_m", "hf_repo": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF",                       "hf_filename": "HuggingFaceTB_SmolLM3-3B-Q4_K_M.gguf",                     "min_ram_gb": 3.0, "obs_tg_estimate": 22.0,  "anchor_basis": "android-flagship (sd-8eg5 cpu)" },
+        { "model": "qwen3.5-4b",            "quant": "q4_k_m", "hf_repo": "unsloth/Qwen3.5-4B-GGUF",                                       "hf_filename": "Qwen3.5-4B-Q4_K_M.gguf",                                   "min_ram_gb": 3.5, "obs_tg_estimate": 15.0,  "anchor_basis": "android-flagship (sd-8eg5 cpu)" },
+        { "model": "ministral-3-3b",        "quant": "q4_k_m", "hf_repo": "bartowski/mistralai_Ministral-3-3B-Instruct-2512-GGUF",         "hf_filename": "mistralai_Ministral-3-3B-Instruct-2512-Q4_K_M.gguf",       "min_ram_gb": 2.5, "obs_tg_estimate": 14.0,  "anchor_basis": "android-flagship (sd-8eg5 cpu)" },
+        { "model": "phi-4-mini-reasoning",  "quant": "q4_k_m", "hf_repo": "bartowski/microsoft_Phi-4-mini-reasoning-GGUF",                 "hf_filename": "microsoft_Phi-4-mini-reasoning-Q4_K_M.gguf",               "min_ram_gb": 3.5, "obs_tg_estimate": 13.0,  "anchor_basis": "android-flagship (sd-8eg5 cpu)" },
+        { "model": "qwen3-vl-4b-instruct",  "quant": "q4_k_m", "hf_repo": "Qwen/Qwen3-VL-4B-Instruct-GGUF",                                "hf_filename": "Qwen3VL-4B-Instruct-Q4_K_M.gguf",                          "min_ram_gb": 3.5, "obs_tg_estimate": 12.0,  "anchor_basis": "android-flagship (sd-8eg5 cpu)" }
+      ]
+    }
+  },
+
+  "_extrapolation_notes": {
+    "method": "iOS TG estimates are taken from Android bench medians on architecturally-comparable Snapdragons. Mappings used: A18 Pro / A19 → SD 8 Elite Gen 5 / SM8850 (Myron); A17 Pro / A18 / M2 → SD 8 Gen 3 (no exact Android peer, interpolated between Myron and S23); A15 / A16 / M1 → SD 8 Gen 2 / SM8550 (S23); A14 → Tensor G4 (mid); A13 → Helio G88 (low).",
+    "known_limitations": [
+      "Metal backend behavior on Q4_K_M vs Q4_0 has not been measured here. If iOS bench finds Metal Q4_0 wins by >10% on TG, candidates will be re-ordered. Mitigation: app code should treat order as preference, not contract.",
+      "iOS jetsam (per-app memory ceiling) may kill larger models that the rules say fit. Peak load estimates from Android may understate iOS pressure. Conservative min_ram_gb values applied.",
+      "Bonsai Q1_0 kernel performance on Metal is unknown — Q1_0 is a slow-path kernel even on x86/ARM CPU; Metal port may or may not exist for Q1_0 yet.",
+      "Mac (macOS) targets are out of scope for this file. If PocketPal ships on Mac, M-series performance ≈ flagship iPad."
+    ],
+    "v2_followups": [
+      "Run iOS bench campaign on at least one device per soc_class (A13/A14 = entry, A15/A16 = mid, A17 Pro / A18 Pro / M-series = flagship). Replace obs_tg_estimate with measured obs_tg_anchor.",
+      "Decide on Metal Q4_0 vs Q4_K_M primary based on actual measurements.",
+      "Add a separate iPadOS overlay if iPad-on-iOS-rules diverge (e.g. M-series iPads with 32 GiB unlocking 8B+ candidates that no iPhone could run)."
+    ]
+  }
+}

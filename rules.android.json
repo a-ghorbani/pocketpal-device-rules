@@ -1,9 +1,11 @@
 {
   "$schema": "https://raw.githubusercontent.com/a-ghorbani/pocketpal-device-rules/main/schema/rules.v1.schema.json",
   "schema_version": "1.0.0-draft",
-  "rules_version": "2026-05-26.1",
-  "generated_at": "2026-05-26T00:00:00Z",
-  "notes": "FOU-99 v1 — classifier + candidates from a 6-device bench campaign (Myron SD 8 Elite Gen 5, S23 SD 8 Gen 2, Klee Dim 8400, Tokay Tensor G4, Aether Helio G88, OnePlus 6 SD 845). SoC table revised: Tensor G3/G4 demoted to mid based on empirical CPU LLM TG measurements (Pixel 9 / Tensor G4 perf clusters with mid-class Snapdragon, not flagship). Candidates per tier derived from CPU-backend bench with tier-specific TG floors (low ≥5, mid ≥8, high ≥10, flagship ≥12) on representative tier devices.",
+  "platform": "android",
+  "rules_version": "2026-06-01.1",
+  "generated_at": "2026-06-01T00:00:00Z",
+  "notes": "FOU-99 v1 Android — classifier + candidates from a 6-device bench campaign (Myron SD 8 Elite Gen 5, S23 SD 8 Gen 2, Klee Dim 8400, Tokay Tensor G4, Aether Helio G88, OnePlus 6 SD 845). SoC table revised: Tensor G3/G4 demoted to mid based on empirical CPU LLM TG measurements (Pixel 9 / Tensor G4 perf clusters with mid-class Snapdragon, not flagship). Candidates per tier derived from CPU-backend bench with tier-specific TG floors (low ≥5, mid ≥8, high ≥10, flagship ≥12) on representative tier devices.",
+  "_quant_policy": "Within each tier, candidates are ORDERED — the first entry per model is the primary recommendation. For ≥3B models we prefer Q4_0 over Q4_K_M on Android: bench shows 10-15% TG advantage on CPU, lower peak memory at load (reducing OOM on 8 GiB devices), and Hexagon HTP delivers a 5× PP speedup on Q4_0 that does not apply to Q4_K_M. For sub-1B models the delta is within noise (~1 TG), so we keep Q4_K_M as primary for quality.",
 
   "classifier": {
     "ram_bands": [
@@ -220,22 +222,23 @@
       ]
     },
     "high": {
-      "description": "High tier — adds SmolLM3-3B. Bench anchors: SD 8 Gen 2 / 8 GiB + Dim 8400 / 7.5 GiB. CPU TG floor: ≥10 tok/s. RAM ceiling ≈3.5 GB peak load — phi-4-mini Q4_K_M is borderline, 4B+ models below floor.",
+      "description": "High tier — adds SmolLM3-3B. Bench anchors: SD 8 Gen 2 / 8 GiB + Dim 8400 / 7.5 GiB. CPU TG floor: ≥10 tok/s. RAM ceiling ≈3.5 GB peak load — phi-4-mini Q4_K_M is borderline, 4B+ models below floor. SmolLM3-3B Q4_0 is primary (14.1 TG, lower peak mem); Q4_K_M is alternate (12.6 TG, marginal quality bump).",
       "candidates": [
         { "model": "qwen3-0.6b",       "quant": "q4_k_m", "hf_repo": "bartowski/Qwen_Qwen3-0.6B-GGUF",          "hf_filename": "Qwen_Qwen3-0.6B-Q4_K_M.gguf",          "min_ram_gb": 1.5, "obs_tg_anchor": 33.6, "anchor": "samsung-s23/poco-x7-klee median" },
         { "model": "lfm2.5-350m",      "quant": "q4_k_m", "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",               "hf_filename": "LFM2.5-350M-Q4_K_M.gguf",              "min_ram_gb": 1.0, "obs_tg_anchor": 57.6, "anchor": "samsung-s23/poco-x7-klee median" },
         { "model": "lfm2.5-350m",      "quant": "q8_0",   "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",               "hf_filename": "LFM2.5-350M-Q8_0.gguf",                "min_ram_gb": 1.0, "obs_tg_anchor": 53.8, "anchor": "samsung-s23/poco-x7-klee median" },
         { "model": "bonsai-1.7b",      "quant": "q1_0",   "hf_repo": "prism-ml/Bonsai-1.7B-gguf",               "hf_filename": "Bonsai-1.7B-Q1_0.gguf",                "min_ram_gb": 1.5, "obs_tg_anchor": 13.8, "anchor": "samsung-s23/poco-x7-klee median" },
-        { "model": "smollm3-3b",       "quant": "q4_k_m", "hf_repo": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF", "hf_filename": "HuggingFaceTB_SmolLM3-3B-Q4_K_M.gguf", "min_ram_gb": 3.0, "obs_tg_anchor": 12.6, "anchor": "samsung-s23/poco-x7-klee median" },
-        { "model": "smollm3-3b",       "quant": "q4_0",   "hf_repo": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF", "hf_filename": "HuggingFaceTB_SmolLM3-3B-Q4_0.gguf",   "min_ram_gb": 2.5, "obs_tg_anchor": 14.1, "anchor": "samsung-s23/poco-x7-klee median" }
+        { "model": "smollm3-3b",       "quant": "q4_0",   "hf_repo": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF", "hf_filename": "HuggingFaceTB_SmolLM3-3B-Q4_0.gguf",   "min_ram_gb": 2.5, "obs_tg_anchor": 14.1, "anchor": "samsung-s23/poco-x7-klee median" },
+        { "model": "smollm3-3b",       "quant": "q4_k_m", "hf_repo": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF", "hf_filename": "HuggingFaceTB_SmolLM3-3B-Q4_K_M.gguf", "min_ram_gb": 3.0, "obs_tg_anchor": 12.6, "anchor": "samsung-s23/poco-x7-klee median" }
       ]
     },
     "flagship": {
-      "description": "Flagship tier — adds 3-4B mid/q4 models. Bench anchor: POCO F8 Ultra / SD 8 Elite Gen 5 / 12 GiB. CPU TG floor: ≥12 tok/s. 8B+ models technically run but at <10 TG (slow) — excluded from defaults but loadable.",
+      "description": "Flagship tier — adds 3-4B mid/q4 models. Bench anchor: POCO F8 Ultra / SD 8 Elite Gen 5 / 12 GiB. CPU TG floor: ≥12 tok/s. 8B+ models technically run but at <10 TG (slow) — excluded from defaults but loadable. Per _quant_policy, Q4_0 is primary for ≥3B models (Hex PP 5× speedup, lower load mem); Q4_K_M follows where measured.",
       "candidates": [
         { "model": "qwen3-0.6b",            "quant": "q4_k_m", "hf_repo": "bartowski/Qwen_Qwen3-0.6B-GGUF",                                "hf_filename": "Qwen_Qwen3-0.6B-Q4_K_M.gguf",                              "min_ram_gb": 1.5, "obs_tg_anchor": 72.8,  "anchor": "poco-myron" },
         { "model": "lfm2.5-350m",           "quant": "q4_k_m", "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",                                     "hf_filename": "LFM2.5-350M-Q4_K_M.gguf",                                  "min_ram_gb": 1.0, "obs_tg_anchor": 179.3, "anchor": "poco-myron" },
         { "model": "bonsai-1.7b",           "quant": "q1_0",   "hf_repo": "prism-ml/Bonsai-1.7B-gguf",                                     "hf_filename": "Bonsai-1.7B-Q1_0.gguf",                                    "min_ram_gb": 1.5, "obs_tg_anchor": 26.3,  "anchor": "poco-myron" },
+        { "model": "smollm3-3b",            "quant": "q4_0",   "hf_repo": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF",                       "hf_filename": "HuggingFaceTB_SmolLM3-3B-Q4_0.gguf",                       "min_ram_gb": 2.5, "obs_tg_anchor": 24.0,  "anchor": "poco-myron" },
         { "model": "smollm3-3b",            "quant": "q4_k_m", "hf_repo": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF",                       "hf_filename": "HuggingFaceTB_SmolLM3-3B-Q4_K_M.gguf",                     "min_ram_gb": 3.0, "obs_tg_anchor": 22.4,  "anchor": "poco-myron" },
         { "model": "qwen3.5-4b",            "quant": "q4_0",   "hf_repo": "unsloth/Qwen3.5-4B-GGUF",                                       "hf_filename": "Qwen3.5-4B-Q4_0.gguf",                                     "min_ram_gb": 3.5, "obs_tg_anchor": 16.8,  "anchor": "poco-myron" },
         { "model": "ministral-3-3b",        "quant": "q4_0",   "hf_repo": "bartowski/mistralai_Ministral-3-3B-Instruct-2512-GGUF",         "hf_filename": "mistralai_Ministral-3-3B-Instruct-2512-Q4_0.gguf",         "min_ram_gb": 2.5, "obs_tg_anchor": 16.1,  "anchor": "poco-myron" },
@@ -246,7 +249,7 @@
   },
 
   "_bench_campaign_notes": {
-    "campaign": "FOU-99 candidate validation, 2026-05-26",
+    "campaign": "FOU-99 candidate validation, 2026-05-26 (revised 2026-06-01: Q4_0 primary for ≥3B, SmolLM3-3B Q4_0 added to flagship)",
     "devices_used": [
       "poco-myron (POCO F8 Ultra, Snapdragon 8 Elite Gen 5 / SM8850, 12 GiB)",
       "samsung-s23 (Snapdragon 8 Gen 2 / SM8550, 8 GiB)",
