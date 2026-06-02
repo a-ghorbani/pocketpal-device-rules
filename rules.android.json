@@ -2,8 +2,8 @@
   "$schema": "https://raw.githubusercontent.com/a-ghorbani/pocketpal-device-rules/main/schema/rules.v1.schema.json",
   "schema_version": "1.0.0-draft",
   "platform": "android",
-  "rules_version": "2026-06-01.3",
-  "generated_at": "2026-06-01T18:50:00Z",
+  "rules_version": "2026-06-02.1",
+  "generated_at": "2026-06-02T08:40:00Z",
   "notes": "FOU-99 v1 Android — classifier + candidates from a 6-device bench campaign (Myron SD 8 Elite Gen 5, S23 SD 8 Gen 2, Klee Dim 8400, Tokay Tensor G4, Aether Helio G88, OnePlus 6 SD 845). SoC table revised: Tensor G3/G4 demoted to mid based on empirical CPU LLM TG measurements (Pixel 9 / Tensor G4 perf clusters with mid-class Snapdragon, not flagship). Candidates per tier derived from CPU-backend bench with tier-specific TG floors (low ≥5, mid ≥8, high ≥10, flagship ≥12) on representative tier devices.",
   "_quant_policy": "Within each tier, candidates are ORDERED — the first entry per model is the primary recommendation. For ≥3B models we prefer Q4_0 over Q4_K_M on Android: bench shows 10-15% TG advantage on CPU, lower peak memory at load (reducing OOM on 8 GiB devices), and Hexagon HTP delivers a 5× PP speedup on Q4_0 that does not apply to Q4_K_M. For sub-1B models the delta is within noise (~1 TG), so we keep Q4_K_M as primary for quality.",
 
@@ -250,7 +250,7 @@
   },
 
   "_bench_campaign_notes": {
-    "campaign": "FOU-99 candidate validation, 2026-05-26 (revised 2026-06-01: Q4_0 primary for ≥3B, SmolLM3-3B Q4_0 added to flagship, Bonsai re-bench on v1.15.1 unlocked Bonsai-4B as flagship candidate)",
+    "campaign": "FOU-99 candidate validation, 2026-05-26 (revised 2026-06-01: Q4_0 primary for ≥3B, SmolLM3-3B Q4_0 added to flagship, Bonsai re-bench on v1.15.1 unlocked Bonsai-4B as flagship candidate; 2026-06-02: Aether closed out the re-bench, confirming no Q1_0 kernel speedup on memory-constrained low-tier devices)",
     "devices_used": [
       "poco-myron (POCO F8 Ultra, Snapdragon 8 Elite Gen 5 / SM8850, 12 GiB)",
       "samsung-s23 (Snapdragon 8 Gen 2 / SM8550, 8 GiB)",
@@ -262,8 +262,8 @@
     "key_findings": [
       "Tensor G3/G4 reclassified to mid (was flagship): empirical CPU TG ~half of Snapdragon flagship on identical cells.",
       "Bonsai (Q1_0 1-bit) loads and runs in upstream llama.cpp (b9204+), but the kernel is slow-path: PP is 5-10x slower vs equivalent Q4_K_M, TG 2-4x slower. Footprint savings real (Bonsai-8B = 1.16 GB on disk vs Qwen3-8B Q4_K_M ~5 GB) but speed cost is significant.",
-      "Bonsai-4B Q1_0 newly crosses the flagship floor (≥8 TG) on v1.15.1 / llama.rn 0.12.4 — Myron 9.3 TG (was 7 TG on v1.15.0 / llama.rn 0.12.1, a ~33% speedup from the upstream Q1_0 kernel work). Added as a flagship candidate. S23/Klee/Tokay still below floor.",
-      "Bonsai-8B Q1_0 now loads on 8 GiB devices on v1.15.1 (S23 1.71 GiB peak, 2.9 TG) — earlier load-fail on v1.15.0 was a llama.cpp regression (upstream issue #22713) not a memory fundamental. Still below all tier floors — kept excluded.",
+      "Bonsai-4B Q1_0 newly crosses the flagship floor (≥8 TG) on v1.15.1 / llama.rn 0.12.4 — Myron 9.3 TG (was 7 TG on v1.15.0 / llama.rn 0.12.1, a ~33% speedup from the upstream Q1_0 kernel work). Added as a flagship candidate. S23/Klee/Tokay still below floor. On Aether (6 GiB low-tier Helio G88), the kernel improvement did NOT materialize — Bonsai-4B stayed at 1.61 TG (same as v1.15.0), suggesting the speedup needs compute/memory headroom to express.",
+      "Bonsai-8B Q1_0 loads on 8 GiB+ Android devices on v1.15.1 (S23 1.71 GiB peak, 2.9 TG) — earlier load-fail on v1.15.0 was a llama.cpp regression (upstream issue #22713) not a memory fundamental. Still below all tier floors — kept excluded. On 6 GiB Android (Aether), Bonsai-8B fails to load (OOM-killed) — Android lowmemorykiller is less permissive than iOS jetsam for the same peak (iPhone 13 Pro 6 GiB loads it fine).",
       "Hexagon HTP supports Q1_0 dispatch but provides no acceleration AND adds dispatch overhead — Q1_0 TG is 5-26% LOWER on Hex than CPU on Bonsai. App should prefer CPU over Hex for Q1_0 specifically (opposite of Q4_0 where Hex gives 5x PP speedup).",
       "Hexagon accelerates Q4_0 PP massively (phi-4-mini-reasoning Q4_0: CPU 47 → Hex 247) but not Q4_K_M.",
       "S23 RAM ceiling ~3.5 GB peak load (8 GiB nominal / ~6.9 GiB reported); Klee similar at 7.5 GiB nominal. Phi-4-mini Q4_K_M borderline.",
