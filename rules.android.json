@@ -2,10 +2,27 @@
   "$schema": "https://raw.githubusercontent.com/a-ghorbani/pocketpal-device-rules/main/schema/rules.v1.schema.json",
   "schema_version": "1.0.0-draft",
   "platform": "android",
-  "rules_version": "2026-06-02.1",
-  "generated_at": "2026-06-02T08:40:00Z",
-  "notes": "FOU-99 v1 Android — classifier + candidates from a 6-device bench campaign (Myron SD 8 Elite Gen 5, S23 SD 8 Gen 2, Klee Dim 8400, Tokay Tensor G4, Aether Helio G88, OnePlus 6 SD 845). SoC table revised: Tensor G3/G4 demoted to mid based on empirical CPU LLM TG measurements (Pixel 9 / Tensor G4 perf clusters with mid-class Snapdragon, not flagship). Candidates per tier derived from CPU-backend bench with tier-specific TG floors (low ≥5, mid ≥8, high ≥10, flagship ≥12) on representative tier devices.",
+  "rules_version": "2026-06-04.1",
+  "generated_at": "2026-06-04T00:00:00Z",
+  "notes": "FOU-99 v1 Android — classifier + candidates from a 6-device bench campaign (Myron SD 8 Elite Gen 5, S23 SD 8 Gen 2, Klee Dim 8400, Tokay Tensor G4, Aether Helio G88, OnePlus 6 SD 845). SoC table revised: Tensor G3/G4 demoted to mid based on empirical CPU LLM TG measurements (Pixel 9 / Tensor G4 perf clusters with mid-class Snapdragon, not flagship). Candidates per tier derived from CPU-backend bench with tier-specific TG floors (low ≥5, mid ≥8, high ≥10, flagship ≥12) on representative tier devices. See _selection_policy for the full membership rule.",
   "_quant_policy": "Within each tier, candidates are ORDERED — the first entry per model is the primary recommendation. For ≥3B models we prefer Q4_0 over Q4_K_M on Android: bench shows 10-15% TG advantage on CPU, lower peak memory at load (reducing OOM on 8 GiB devices), and Hexagon HTP delivers a 5× PP speedup on Q4_0 that does not apply to Q4_K_M. For sub-1B models the delta is within noise (~1 TG), so we keep Q4_K_M as primary for quality.",
+  "_selection_policy": {
+    "rule": "Candidate enters tier T iff (CPU TG on rep_device[T] >= tier_floors_cpu_tg[T]) AND (peak_load_mem fits ram_band[T] with OS-killer margin). Backend is CPU baseline so the floor is invariant to accelerator availability; accelerators (Hexagon HTP, Adreno OpenCL) may exceed the floor in practice but do not change tier membership. Within a tier, candidates are ORDERED — first per model_id is the primary recommendation.",
+    "tier_floors_cpu_tg": { "low": 5, "mid": 8, "high": 10, "flagship": 12 },
+    "rep_devices": {
+      "low":      { "name": "OnePlus 6 / Helio G88",   "soc": "SD 845 / Helio G88",    "ram_band": "4-6" },
+      "mid":      { "name": "Pixel 9 (Tokay)",         "soc": "Tensor G4",             "ram_band": "8-12" },
+      "high":     { "name": "Galaxy S23 / POCO X7 Pro","soc": "SD 8 Gen 2 / Dim 8400", "ram_band": "6-8" },
+      "flagship": { "name": "POCO F8 Ultra (Myron)",   "soc": "SD 8 Elite Gen 5",      "ram_band": "12-plus" }
+    },
+    "os_killer_margin": "Android lowmemorykiller — leave ~25-35% of physical RAM as headroom. Peak load >= ~3.5 GB on 8 GiB devices is risk-of-OOM; >= ~6 GB on 12 GiB devices is risk-of-OOM. Used to exclude Bonsai-8B on 6 GiB low tier (OOM-killed at load on Aether) and Qwen3.5-9B Q4_K_M on 8 GiB high tier.",
+    "examples": [
+      "phi-4-mini-reasoning q4_k_m: S23 CPU TG = 7.2 (high rep) < 10 floor -> NOT in high. Myron CPU TG > 12 -> flagship only.",
+      "smollm3-3b q4_0: Klee CPU TG ~13 (high rep) >= 10 -> enters high; Myron clears 12 -> also flagship.",
+      "bonsai-4b q1_0: Myron 9.3 on v1.15.1 just clears mid floor 8 but is below flagship floor 12. Listed as a flagship candidate only because it's the largest Q1_0 footprint that loads safely there, not because TG clears 12 -- tracked as exception in _bench_campaign_notes.",
+      "bonsai-8b q1_0: Myron 4.1 < 12 -> excluded on every tier on Android (loads on 8 GiB+ but below all floors)."
+    ]
+  },
 
   "classifier": {
     "ram_bands": [
