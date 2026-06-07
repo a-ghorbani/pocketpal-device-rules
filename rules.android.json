@@ -2,27 +2,20 @@
   "$schema": "https://raw.githubusercontent.com/a-ghorbani/pocketpal-device-rules/main/schema/rules.v1.schema.json",
   "schema_version": "1.0.0-draft",
   "platform": "android",
-  "rules_version": "2026-06-05.1",
-  "generated_at": "2026-06-05T00:00:00Z",
-  "notes": "FOU-99 v1 Android — classifier + candidates from a 6-device bench campaign (Myron SD 8 Elite Gen 5, S23 SD 8 Gen 2, Klee Dim 8400, Tokay Tensor G4, Aether Helio G88, OnePlus 6 SD 845). SoC table revised: Tensor G3/G4 demoted to mid based on empirical CPU LLM TG measurements (Pixel 9 / Tensor G4 perf clusters with mid-class Snapdragon, not flagship). Candidates per tier derived from CPU-backend bench with tier-specific TG floors (low ≥5, mid ≥8, high ≥10, flagship ≥12) on representative tier devices. See _selection_policy for the full membership rule.",
-  "_quant_policy": "Within each tier, candidates are ORDERED — the first entry per model is the primary recommendation. For ≥3B models we prefer Q4_0 over Q4_K_M on Android: bench shows 10-15% TG advantage on CPU, lower peak memory at load (reducing OOM on 8 GiB devices), and Hexagon HTP delivers a 5× PP speedup on Q4_0 that does not apply to Q4_K_M. For sub-1B models the delta is within noise (~1 TG), so we keep Q4_K_M as primary for quality.",
+  "rules_version": "2026-06-07.1",
+  "generated_at": "2026-06-07T00:00:00Z",
+  "notes": "FOU-99 v1 Android — classifier + per-tier candidates from a 6-device CPU bench campaign. Methodology, history and excluded candidates in README.",
+  "_quant_policy": "Within each tier, candidates are ORDERED — first per model is the primary recommendation. For ≥3B models Q4_0 is primary (Hex 5× PP speedup, lower load mem); sub-1B uses Q4_K_M.",
   "_selection_policy": {
-    "rule": "Candidate enters tier T iff (CPU TG on rep_device[T] >= tier_floors_cpu_tg[T]) AND (peak_load_mem fits ram_band[T] with OS-killer margin). Backend is CPU baseline so the floor is invariant to accelerator availability; accelerators (Hexagon HTP, Adreno OpenCL) may exceed the floor in practice but do not change tier membership. Within a tier, candidates are ORDERED — first per model_id is the primary recommendation.",
+    "rule": "Candidate enters tier T iff (CPU TG on rep_device[T] >= tier_floors_cpu_tg[T]) AND (peak_load_mem fits ram_band[T] with OS-killer margin). Accelerators may exceed floor but don't change membership.",
     "tier_floors_cpu_tg": { "low": 5, "mid": 8, "high": 10, "flagship": 12 },
     "rep_devices": {
-      "low":      { "name": "OnePlus 6 / Helio G88",   "soc": "SD 845 / Helio G88",    "ram_band": "4-6" },
-      "mid":      { "name": "Pixel 7a (lynx) / Pixel 8 (shiba)", "soc": "Tensor G2 / G3", "ram_band": "6-8" },
-      "high":     { "name": "Galaxy S23 / POCO X7 Pro","soc": "SD 8 Gen 2 / Dim 8400", "ram_band": "6-8" },
-      "flagship": { "name": "POCO F8 Ultra (Myron)",   "soc": "SD 8 Elite Gen 5",      "ram_band": "12-plus" }
+      "low":      { "name": "OnePlus 6 / Helio G88",            "soc": "SD 845 / Helio G88",    "ram_band": "4-6" },
+      "mid":      { "name": "Pixel 7a (lynx) / Pixel 8 (shiba)","soc": "Tensor G2 / G3",        "ram_band": "6-8" },
+      "high":     { "name": "Galaxy S23 / POCO X7 Pro",         "soc": "SD 8 Gen 2 / Dim 8400", "ram_band": "6-8" },
+      "flagship": { "name": "POCO F8 Ultra (Myron)",            "soc": "SD 8 Elite Gen 5",      "ram_band": "12-plus" }
     },
-    "_rep_devices_note": "Mid rep was changed from Pixel 9 (Tokay) on 2026-06-05 after validation showed Pixel 9 actually classifies as HIGH tier per the matrix (mid soc_class x 8-12 ram_band -> high). The new mid rep is the Pixel 7-class (Tensor G2/G3 with 6-8 GiB) which falls in (mid soc_class x 6-8 ram_band) -> mid. Our 6-phone bench was conducted on Pixel 9 / Tokay so the mid-tier anchor TG values in tiers.mid.candidates[].obs_tg_anchor are taken from a higher-RAM same-SoC-family device (Tensor G4 ~= Tensor G2 in single-thread CPU LLM TG within ~15%). Community Turso confirms: Pixel 7a (lynx) Qwen3-0.6B Q4_K_M ngl=99 = 17.2 TG >> mid floor 8. A Tensor G2/G3 direct re-bench is a v1.1 follow-up.",
-    "os_killer_margin": "Android lowmemorykiller — leave ~25-35% of physical RAM as headroom. Peak load >= ~3.5 GB on 8 GiB devices is risk-of-OOM; >= ~6 GB on 12 GiB devices is risk-of-OOM. Used to exclude Bonsai-8B on 6 GiB low tier (OOM-killed at load on Aether) and Qwen3.5-9B Q4_K_M on 8 GiB high tier.",
-    "examples": [
-      "phi-4-mini-reasoning q4_k_m: S23 CPU TG = 7.2 (high rep) < 10 floor -> NOT in high. Myron CPU TG > 12 -> flagship only.",
-      "smollm3-3b q4_0: Klee CPU TG ~13 (high rep) >= 10 -> enters high; Myron clears 12 -> also flagship.",
-      "bonsai-4b q1_0: Myron 9.3 on v1.15.1 just clears mid floor 8 but is below flagship floor 12. Listed as a flagship candidate only because it's the largest Q1_0 footprint that loads safely there, not because TG clears 12 -- tracked as exception in _bench_campaign_notes.",
-      "bonsai-8b q1_0: Myron 4.1 < 12 -> excluded on every tier on Android (loads on 8 GiB+ but below all floors)."
-    ]
+    "os_killer_margin": "Android lowmemorykiller: leave ~25-35% of physical RAM as headroom. Used to exclude Bonsai-8B on 6 GiB and Qwen3.5-9B Q4_K_M on 8 GiB."
   },
 
   "classifier": {
@@ -36,7 +29,6 @@
 
     "soc_classes": ["budget", "mid", "flagship"],
 
-    "_comment_layer_1": "Layer 1: Build.SOC_MODEL (Android 12+ / API 31+). Case-insensitive exact match. This is the cleanest signal — covers ~80% of the active install base directly.",
     "soc_model_to_class": {
       "SM8850":    "flagship",
       "SM8750":    "flagship",
@@ -89,7 +81,6 @@
       "Tensor G5": "mid"
     },
 
-    "_comment_layer_2": "Layer 2: Build.HARDWARE codename — fallback for Android < 12. Seeded from Turso top-60 codenames. Some MTK k##### codenames need validation against bench (marked).",
     "hardware_to_class": {
       "sun":         "flagship",
       "pineapple":   "flagship",
@@ -161,43 +152,17 @@
       "rosemary":    "budget"
     },
 
-    "_comment_layer_3": "Layer 3: CPU heuristic — runs only when Layer 1+2 miss. Rules evaluated top-to-bottom, first match wins. Anchored on llama.cpp's actual dispatch signals (i8mm/dotprod) and on big-core clock as a thermal/silicon-class proxy.",
     "cpu_heuristic": {
       "rules": [
-        {
-          "match": { "features_any": ["i8mm"] },
-          "class": "flagship",
-          "rationale": "ARMv8.6+/v9 chips with i8mm are 2022+ flagship-class; llama.cpp uses i8mm kernels here"
-        },
-        {
-          "match": { "features_any": ["sve2"] },
-          "class": "flagship",
-          "rationale": "SVE2 implies ARMv9 — flagship silicon"
-        },
-        {
-          "match": { "max_freq_mhz_min": 3000 },
-          "class": "flagship",
-          "rationale": ">= 3.0 GHz big-core sustained clock indicates flagship thermal/silicon class"
-        },
-        {
-          "match": { "features_all": ["dotprod"], "max_freq_mhz_min": 2400 },
-          "class": "mid",
-          "rationale": "ARMv8.2+ dotprod with capable clock = mid-range silicon"
-        },
-        {
-          "match": { "features_all": ["dotprod"] },
-          "class": "mid",
-          "rationale": "Has dotprod but lower clock — conservative mid (older big-A75/A76 phones)"
-        },
-        {
-          "match": {},
-          "class": "budget",
-          "rationale": "Default — pre-ARMv8.2 chip, or unable to read CPU info"
-        }
+        { "match": { "features_any": ["i8mm"] },                           "class": "flagship" },
+        { "match": { "features_any": ["sve2"] },                           "class": "flagship" },
+        { "match": { "max_freq_mhz_min": 3000 },                           "class": "flagship" },
+        { "match": { "features_all": ["dotprod"], "max_freq_mhz_min": 2400 }, "class": "mid" },
+        { "match": { "features_all": ["dotprod"] },                        "class": "mid" },
+        { "match": {},                                                     "class": "budget" }
       ]
     },
 
-    "_comment_matrix": "Tier matrix: (ram_band × soc_class) → tier_id. Lookup unknowns: missing SoC class is treated as 'budget' for safety. Reported RAM ≪ nominal RAM (8 GiB phones report ~6.9-7.4 GiB; 12 GiB phones report ~10.3-11.3 GiB) — bands are tuned for reported values.",
     "tier_matrix": [
       { "ram_band": "lt-4",    "soc_class": "budget",   "tier": "low" },
       { "ram_band": "lt-4",    "soc_class": "mid",      "tier": "low" },
@@ -223,84 +188,47 @@
 
   "tiers": {
     "low": {
-      "description": "Entry tier — sub-1B models only. Bench anchors: Helio G88 / 6 GiB + SD 845 / 6-8 GiB. CPU TG floor: ≥5 tok/s. Even Bonsai-1.7B Q1_0 is borderline here (4.8 tok/s on SD 845, 3.2 on Helio G88).",
+      "description": "Sub-1B models only. CPU TG floor ≥5 on rep.",
       "candidates": [
-        { "model": "qwen3-0.6b",   "quant": "q4_k_m", "hf_repo": "bartowski/Qwen_Qwen3-0.6B-GGUF",    "hf_filename": "Qwen_Qwen3-0.6B-Q4_K_M.gguf",    "min_ram_gb": 1.5, "obs_tg_anchor": 5.0,  "anchor": "redmi-aether" },
-        { "model": "lfm2.5-350m",  "quant": "q4_k_m", "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",         "hf_filename": "LFM2.5-350M-Q4_K_M.gguf",        "min_ram_gb": 1.0, "obs_tg_anchor": 6.7,  "anchor": "redmi-aether" },
-        { "model": "lfm2.5-350m",  "quant": "q8_0",   "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",         "hf_filename": "LFM2.5-350M-Q8_0.gguf",          "min_ram_gb": 1.0, "obs_tg_anchor": 6.5,  "anchor": "redmi-aether" }
+        { "model": "qwen3-0.6b",   "quant": "q4_k_m", "hf_repo": "bartowski/Qwen_Qwen3-0.6B-GGUF", "hf_filename": "Qwen_Qwen3-0.6B-Q4_K_M.gguf", "min_ram_gb": 1.5, "obs_tg": 5.0 },
+        { "model": "lfm2.5-350m",  "quant": "q4_k_m", "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",      "hf_filename": "LFM2.5-350M-Q4_K_M.gguf",     "min_ram_gb": 1.0, "obs_tg": 6.7 },
+        { "model": "lfm2.5-350m",  "quant": "q8_0",   "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",      "hf_filename": "LFM2.5-350M-Q8_0.gguf",       "min_ram_gb": 1.0, "obs_tg": 6.5 }
       ]
     },
     "mid": {
-      "description": "Mid tier — adds Bonsai-1.7B to the low set. Bench anchor: Pixel 9 / Tensor G4 (Tensor G3/G4 demoted from flagship to mid based on empirical CPU LLM perf clustering with mid Snapdragon). CPU TG floor: ≥8 tok/s.",
+      "description": "Adds Bonsai-1.7B. CPU TG floor ≥8 on rep.",
       "candidates": [
-        { "model": "qwen3-0.6b",   "quant": "q4_k_m", "hf_repo": "bartowski/Qwen_Qwen3-0.6B-GGUF",    "hf_filename": "Qwen_Qwen3-0.6B-Q4_K_M.gguf",    "min_ram_gb": 1.5, "obs_tg_anchor": 14.7, "anchor": "pixel-9-tokay" },
-        { "model": "lfm2.5-350m",  "quant": "q4_k_m", "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",         "hf_filename": "LFM2.5-350M-Q4_K_M.gguf",        "min_ram_gb": 1.0, "obs_tg_anchor": 30.5, "anchor": "pixel-9-tokay" },
-        { "model": "lfm2.5-350m",  "quant": "q8_0",   "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",         "hf_filename": "LFM2.5-350M-Q8_0.gguf",          "min_ram_gb": 1.0, "obs_tg_anchor": 24.9, "anchor": "pixel-9-tokay" },
-        { "model": "bonsai-1.7b",  "quant": "q1_0",   "hf_repo": "prism-ml/Bonsai-1.7B-gguf",         "hf_filename": "Bonsai-1.7B-Q1_0.gguf",          "min_ram_gb": 1.5, "obs_tg_anchor": 9.9,  "anchor": "pixel-9-tokay" }
+        { "model": "qwen3-0.6b",   "quant": "q4_k_m", "hf_repo": "bartowski/Qwen_Qwen3-0.6B-GGUF", "hf_filename": "Qwen_Qwen3-0.6B-Q4_K_M.gguf", "min_ram_gb": 1.5, "obs_tg": 14.7 },
+        { "model": "lfm2.5-350m",  "quant": "q4_k_m", "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",      "hf_filename": "LFM2.5-350M-Q4_K_M.gguf",     "min_ram_gb": 1.0, "obs_tg": 30.5 },
+        { "model": "lfm2.5-350m",  "quant": "q8_0",   "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",      "hf_filename": "LFM2.5-350M-Q8_0.gguf",       "min_ram_gb": 1.0, "obs_tg": 24.9 },
+        { "model": "bonsai-1.7b",  "quant": "q1_0",   "hf_repo": "prism-ml/Bonsai-1.7B-gguf",      "hf_filename": "Bonsai-1.7B-Q1_0.gguf",       "min_ram_gb": 1.5, "obs_tg": 9.9 }
       ]
     },
     "high": {
-      "description": "High tier — adds SmolLM3-3B. Bench anchors: SD 8 Gen 2 / 8 GiB + Dim 8400 / 7.5 GiB. CPU TG floor: ≥10 tok/s. RAM ceiling ≈3.5 GB peak load — phi-4-mini Q4_K_M is borderline, 4B+ models below floor. SmolLM3-3B Q4_0 is primary (14.1 TG, lower peak mem); Q4_K_M is alternate (12.6 TG, marginal quality bump).",
+      "description": "Adds SmolLM3-3B. CPU TG floor ≥10 on rep. Peak load ~3.5 GB ceiling on 8 GiB devices.",
       "candidates": [
-        { "model": "qwen3-0.6b",       "quant": "q4_k_m", "hf_repo": "bartowski/Qwen_Qwen3-0.6B-GGUF",          "hf_filename": "Qwen_Qwen3-0.6B-Q4_K_M.gguf",          "min_ram_gb": 1.5, "obs_tg_anchor": 33.6, "anchor": "samsung-s23/poco-x7-klee median" },
-        { "model": "lfm2.5-350m",      "quant": "q4_k_m", "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",               "hf_filename": "LFM2.5-350M-Q4_K_M.gguf",              "min_ram_gb": 1.0, "obs_tg_anchor": 57.6, "anchor": "samsung-s23/poco-x7-klee median" },
-        { "model": "lfm2.5-350m",      "quant": "q8_0",   "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",               "hf_filename": "LFM2.5-350M-Q8_0.gguf",                "min_ram_gb": 1.0, "obs_tg_anchor": 53.8, "anchor": "samsung-s23/poco-x7-klee median" },
-        { "model": "bonsai-1.7b",      "quant": "q1_0",   "hf_repo": "prism-ml/Bonsai-1.7B-gguf",               "hf_filename": "Bonsai-1.7B-Q1_0.gguf",                "min_ram_gb": 1.5, "obs_tg_anchor": 13.8, "anchor": "samsung-s23/poco-x7-klee median" },
-        { "model": "smollm3-3b",       "quant": "q4_0",   "hf_repo": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF", "hf_filename": "HuggingFaceTB_SmolLM3-3B-Q4_0.gguf",   "min_ram_gb": 2.5, "obs_tg_anchor": 14.1, "anchor": "samsung-s23/poco-x7-klee median" },
-        { "model": "smollm3-3b",       "quant": "q4_k_m", "hf_repo": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF", "hf_filename": "HuggingFaceTB_SmolLM3-3B-Q4_K_M.gguf", "min_ram_gb": 3.0, "obs_tg_anchor": 12.6, "anchor": "samsung-s23/poco-x7-klee median" }
+        { "model": "qwen3-0.6b",   "quant": "q4_k_m", "hf_repo": "bartowski/Qwen_Qwen3-0.6B-GGUF",          "hf_filename": "Qwen_Qwen3-0.6B-Q4_K_M.gguf",          "min_ram_gb": 1.5, "obs_tg": 33.6 },
+        { "model": "lfm2.5-350m",  "quant": "q4_k_m", "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",               "hf_filename": "LFM2.5-350M-Q4_K_M.gguf",              "min_ram_gb": 1.0, "obs_tg": 57.6 },
+        { "model": "lfm2.5-350m",  "quant": "q8_0",   "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",               "hf_filename": "LFM2.5-350M-Q8_0.gguf",                "min_ram_gb": 1.0, "obs_tg": 53.8 },
+        { "model": "bonsai-1.7b",  "quant": "q1_0",   "hf_repo": "prism-ml/Bonsai-1.7B-gguf",               "hf_filename": "Bonsai-1.7B-Q1_0.gguf",                "min_ram_gb": 1.5, "obs_tg": 13.8 },
+        { "model": "smollm3-3b",   "quant": "q4_0",   "hf_repo": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF", "hf_filename": "HuggingFaceTB_SmolLM3-3B-Q4_0.gguf",   "min_ram_gb": 2.5, "obs_tg": 14.1 },
+        { "model": "smollm3-3b",   "quant": "q4_k_m", "hf_repo": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF", "hf_filename": "HuggingFaceTB_SmolLM3-3B-Q4_K_M.gguf", "min_ram_gb": 3.0, "obs_tg": 12.6 }
       ]
     },
     "flagship": {
-      "description": "Flagship tier — adds 3-4B mid/q4 models. Bench anchor: POCO F8 Ultra / SD 8 Elite Gen 5 / 12 GiB. CPU TG floor: ≥12 tok/s. 8B+ models technically run but at <10 TG (slow) — excluded from defaults but loadable. Per _quant_policy, Q4_0 is primary for ≥3B models (Hex PP 5× speedup, lower load mem); Q4_K_M follows where measured.",
+      "description": "Adds 3-4B Q4 dense models. CPU TG floor ≥12 on rep. 8B+ excluded (below floor).",
       "candidates": [
-        { "model": "qwen3-0.6b",            "quant": "q4_k_m", "hf_repo": "bartowski/Qwen_Qwen3-0.6B-GGUF",                                "hf_filename": "Qwen_Qwen3-0.6B-Q4_K_M.gguf",                              "min_ram_gb": 1.5, "obs_tg_anchor": 72.8,  "anchor": "poco-myron" },
-        { "model": "lfm2.5-350m",           "quant": "q4_k_m", "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",                                     "hf_filename": "LFM2.5-350M-Q4_K_M.gguf",                                  "min_ram_gb": 1.0, "obs_tg_anchor": 179.3, "anchor": "poco-myron" },
-        { "model": "bonsai-1.7b",           "quant": "q1_0",   "hf_repo": "prism-ml/Bonsai-1.7B-gguf",                                     "hf_filename": "Bonsai-1.7B-Q1_0.gguf",                                    "min_ram_gb": 1.5, "obs_tg_anchor": 26.3,  "anchor": "poco-myron" },
-        { "model": "smollm3-3b",            "quant": "q4_0",   "hf_repo": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF",                       "hf_filename": "HuggingFaceTB_SmolLM3-3B-Q4_0.gguf",                       "min_ram_gb": 2.5, "obs_tg_anchor": 24.0,  "anchor": "poco-myron" },
-        { "model": "smollm3-3b",            "quant": "q4_k_m", "hf_repo": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF",                       "hf_filename": "HuggingFaceTB_SmolLM3-3B-Q4_K_M.gguf",                     "min_ram_gb": 3.0, "obs_tg_anchor": 22.4,  "anchor": "poco-myron" },
-        { "model": "qwen3.5-4b",            "quant": "q4_0",   "hf_repo": "unsloth/Qwen3.5-4B-GGUF",                                       "hf_filename": "Qwen3.5-4B-Q4_0.gguf",                                     "min_ram_gb": 3.5, "obs_tg_anchor": 16.8,  "anchor": "poco-myron" },
-        { "model": "ministral-3-3b",        "quant": "q4_0",   "hf_repo": "bartowski/mistralai_Ministral-3-3B-Instruct-2512-GGUF",         "hf_filename": "mistralai_Ministral-3-3B-Instruct-2512-Q4_0.gguf",         "min_ram_gb": 2.5, "obs_tg_anchor": 16.1,  "anchor": "poco-myron" },
-        { "model": "phi-4-mini-reasoning",  "quant": "q4_0",   "hf_repo": "bartowski/microsoft_Phi-4-mini-reasoning-GGUF",                 "hf_filename": "microsoft_Phi-4-mini-reasoning-Q4_0.gguf",                 "min_ram_gb": 3.5, "obs_tg_anchor": 14.6,  "anchor": "poco-myron" },
-        { "model": "qwen3-vl-4b-instruct",  "quant": "q4_k_m", "hf_repo": "Qwen/Qwen3-VL-4B-Instruct-GGUF",                                "hf_filename": "Qwen3VL-4B-Instruct-Q4_K_M.gguf",                          "min_ram_gb": 3.5, "obs_tg_anchor": 12.0,  "anchor": "poco-myron" },
-        { "model": "bonsai-4b",             "quant": "q1_0",   "hf_repo": "prism-ml/Bonsai-4B-gguf",                                       "hf_filename": "Bonsai-4B-Q1_0.gguf",                                      "min_ram_gb": 1.0, "obs_tg_anchor": 9.3,   "anchor": "poco-myron (v1.15.1 re-bench)" }
+        { "model": "qwen3-0.6b",            "quant": "q4_k_m", "hf_repo": "bartowski/Qwen_Qwen3-0.6B-GGUF",                         "hf_filename": "Qwen_Qwen3-0.6B-Q4_K_M.gguf",                        "min_ram_gb": 1.5, "obs_tg": 72.8 },
+        { "model": "lfm2.5-350m",           "quant": "q4_k_m", "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",                              "hf_filename": "LFM2.5-350M-Q4_K_M.gguf",                            "min_ram_gb": 1.0, "obs_tg": 179.3 },
+        { "model": "bonsai-1.7b",           "quant": "q1_0",   "hf_repo": "prism-ml/Bonsai-1.7B-gguf",                              "hf_filename": "Bonsai-1.7B-Q1_0.gguf",                              "min_ram_gb": 1.5, "obs_tg": 26.3 },
+        { "model": "smollm3-3b",            "quant": "q4_0",   "hf_repo": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF",                "hf_filename": "HuggingFaceTB_SmolLM3-3B-Q4_0.gguf",                  "min_ram_gb": 2.5, "obs_tg": 24.0 },
+        { "model": "smollm3-3b",            "quant": "q4_k_m", "hf_repo": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF",                "hf_filename": "HuggingFaceTB_SmolLM3-3B-Q4_K_M.gguf",                "min_ram_gb": 3.0, "obs_tg": 22.4 },
+        { "model": "qwen3.5-4b",            "quant": "q4_0",   "hf_repo": "unsloth/Qwen3.5-4B-GGUF",                                "hf_filename": "Qwen3.5-4B-Q4_0.gguf",                               "min_ram_gb": 3.5, "obs_tg": 16.8 },
+        { "model": "ministral-3-3b",        "quant": "q4_0",   "hf_repo": "bartowski/mistralai_Ministral-3-3B-Instruct-2512-GGUF",  "hf_filename": "mistralai_Ministral-3-3B-Instruct-2512-Q4_0.gguf",   "min_ram_gb": 2.5, "obs_tg": 16.1 },
+        { "model": "phi-4-mini-reasoning",  "quant": "q4_0",   "hf_repo": "bartowski/microsoft_Phi-4-mini-reasoning-GGUF",          "hf_filename": "microsoft_Phi-4-mini-reasoning-Q4_0.gguf",           "min_ram_gb": 3.5, "obs_tg": 14.6 },
+        { "model": "qwen3-vl-4b-instruct",  "quant": "q4_k_m", "hf_repo": "Qwen/Qwen3-VL-4B-Instruct-GGUF",                         "hf_filename": "Qwen3VL-4B-Instruct-Q4_K_M.gguf",                    "min_ram_gb": 3.5, "obs_tg": 12.0 },
+        { "model": "bonsai-4b",             "quant": "q1_0",   "hf_repo": "prism-ml/Bonsai-4B-gguf",                                "hf_filename": "Bonsai-4B-Q1_0.gguf",                                "min_ram_gb": 1.0, "obs_tg": 9.3 }
       ]
     }
-  },
-
-  "_bench_campaign_notes": {
-    "campaign": "FOU-99 candidate validation, 2026-05-26 (revised 2026-06-01: Q4_0 primary for ≥3B, SmolLM3-3B Q4_0 added to flagship, Bonsai re-bench on v1.15.1 unlocked Bonsai-4B as flagship candidate; 2026-06-02: Aether closed out the re-bench, confirming no Q1_0 kernel speedup on memory-constrained low-tier devices)",
-    "devices_used": [
-      "poco-myron (POCO F8 Ultra, Snapdragon 8 Elite Gen 5 / SM8850, 12 GiB)",
-      "samsung-s23 (Snapdragon 8 Gen 2 / SM8550, 8 GiB)",
-      "poco-x7-klee (Dimensity 8400 / MT6886, 7.5 GiB)",
-      "pixel-9-tokay (Tensor G4, 12 GiB) — empirically mid-class on CPU LLM",
-      "redmi-aether (Helio G88 / MT6769V/CZ, 6 GiB) — budget anchor",
-      "oneplus6 (Snapdragon 845, ~6-8 GiB, Android 11) — old-flagship anchor; behaves as low/mid"
-    ],
-    "key_findings": [
-      "Tensor G3/G4 reclassified to mid (was flagship): empirical CPU TG ~half of Snapdragon flagship on identical cells.",
-      "Bonsai (Q1_0 1-bit) loads and runs in upstream llama.cpp (b9204+), but the kernel is slow-path: PP is 5-10x slower vs equivalent Q4_K_M, TG 2-4x slower. Footprint savings real (Bonsai-8B = 1.16 GB on disk vs Qwen3-8B Q4_K_M ~5 GB) but speed cost is significant.",
-      "Bonsai-4B Q1_0 newly crosses the flagship floor (≥8 TG) on v1.15.1 / llama.rn 0.12.4 — Myron 9.3 TG (was 7 TG on v1.15.0 / llama.rn 0.12.1, a ~33% speedup from the upstream Q1_0 kernel work). Added as a flagship candidate. S23/Klee/Tokay still below floor. On Aether (6 GiB low-tier Helio G88), the kernel improvement did NOT materialize — Bonsai-4B stayed at 1.61 TG (same as v1.15.0), suggesting the speedup needs compute/memory headroom to express.",
-      "Bonsai-8B Q1_0 loads on 8 GiB+ Android devices on v1.15.1 (S23 1.71 GiB peak, 2.9 TG) — earlier load-fail on v1.15.0 was a llama.cpp regression (upstream issue #22713) not a memory fundamental. Still below all tier floors — kept excluded. On 6 GiB Android (Aether), Bonsai-8B fails to load (OOM-killed) — Android lowmemorykiller is less permissive than iOS jetsam for the same peak (iPhone 13 Pro 6 GiB loads it fine).",
-      "Hexagon HTP supports Q1_0 dispatch but provides no acceleration AND adds dispatch overhead — Q1_0 TG is 5-26% LOWER on Hex than CPU on Bonsai. App should prefer CPU over Hex for Q1_0 specifically (opposite of Q4_0 where Hex gives 5x PP speedup).",
-      "Adreno OpenCL also has no tuned Q1_0 kernel — GPU TG loses to CPU on 5 of 6 (model, device) cells (the exception: Bonsai-8B Myron, GPU 4.59 vs CPU 4.07, both below floor). Bonsai's largest peak (1.7 GiB) is below the 3 GiB Adreno crash threshold so all GPU cells completed. PP is nearly identical across CPU/Hex/GPU on Q1_0 (within 1% on Myron), suggesting Q1_0's PP path is CPU-bound regardless of TG dispatch. Backend recommendation for Q1_0 on Android: CPU.",
-      "Hexagon accelerates Q4_0 PP massively (phi-4-mini-reasoning Q4_0: CPU 47 → Hex 247) but not Q4_K_M.",
-      "S23 RAM ceiling ~3.5 GB peak load (8 GiB nominal / ~6.9 GiB reported); Klee similar at 7.5 GiB nominal. Phi-4-mini Q4_K_M borderline.",
-      "Helio G88 / 6 GiB device cannot reliably load 2+ GB peak models — recommend strictly sub-1B for safety."
-    ],
-    "excluded_from_recommendations": [
-      "Bonsai-8B Q1_0 — TG below tier floors everywhere (Myron 4.1, S23 2.9, Klee 3.8, Tokay 2.7, OP6 0.67 on v1.15.1). Loads fine (1.71 GiB peak) but too slow.",
-      "Qwen3.5-9B Q4_K_M — fits Myron only (7 TG), below flagship floor",
-      "Ministral-3-8B-Reasoning — Myron only (7 TG)",
-      "Qwen3-VL-8B-Thinking — Myron only (7 TG)",
-      "Gemma-4-E4B — Myron only at TG 10-11 (just below 12 floor); good candidate for v1.1 if floor relaxed",
-      "Phi-4-mini-reasoning Q4_K_M on high tier — borderline (S23 7.2, Klee 9.1 — below 10 floor); high tier ships Q4_0 only"
-    ],
-    "v2_followups": [
-      "Re-bench with the Gemma-4-E4B unlocked (it's right at the floor)",
-      "Add perf_class S/M/L hint to candidates once UX is defined",
-      "Backend-aware overlay: Hex Q4_0 acceleration is a real perf win on phi-4-mini-reasoning that we leave on the table in CPU-only v1",
-      "8B model coverage: future Bonsai versions with optimized Q1_0 kernel might unlock flagship 8B-class recommendations"
-    ]
   }
 }
