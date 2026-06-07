@@ -107,8 +107,108 @@ Known limitations:
 - iOS Turso submissions show `flash_attn=0` for all iPhone 13 Pro Bonsai entries even though one was actually FA=ON — iOS bench-submit payload appears to drop the flash_attn init setting. Treat `flash_attn` on iOS Turso rows as unreliable.
 - Mac (macOS) targets are out of scope.
 
+## Updating the candidate lists
+
+This repo holds **only the generated data artifacts** — no scripts. The per-tier
+candidate lists are **generated from real community benchmark submissions**, not
+hand-curated. PocketPal collects thousands of on-device benchmark runs (device
+SoC/RAM + measured prefill/token-gen + peak memory); the generator turns that data
+into the `tiers.*.candidates` blocks. **"Update the list" = re-run the generator.**
+
+The generator lives in the advisory tooling (next to the data fetcher), not here:
+
+```bash
+# in the founder-advisory-board repo:
+python3 tools/fetch-benchmarks.py --refresh                              # refresh community data
+python3 tools/gen-device-rules.py --rules-dir ~/codes/pocketpal-device-rules            # writes the JSON
+python3 tools/gen-device-rules.py --rules-dir ~/codes/pocketpal-device-rules --dry-run  # preview only
+```
+
+What it does and does not touch:
+
+- **Regenerates** only `tiers.*.candidates` (model, quant, hf_repo/filename, `min_ram_gb`
+  from real p90 peak memory, `obs_tg` from real median token-gen).
+- **Never touches** the classifier (`soc_model_to_class`, `cpu_heuristic`, `chip_to_class`,
+  `ram_bands`, `tier_matrix`) — that stays the curated v1 logic.
+
+How models are chosen:
+
+- `MODEL_REGISTRY` (top of the generator) is the single curated knob: the modern,
+  llama.cpp-safe shortlist + each model's `min_tier` and ordering `rank`. Add a model →
+  re-run → community data validates it.
+- Community data is the **guardrail**: a model is dropped from a tier if its real median
+  token-gen on that tier's devices is below `MIN_TG`, or its p90 peak memory doesn't fit
+  the tier's RAM band (with OS-killer headroom). Sub-3-bit *post-training* quants are never
+  eligible — but models **trained natively** at low bit-width (BitNet b1.58 / ternary, e.g.
+  PrismML Bonsai) opt in via `native_low_bit` and ship their native quant, since there 1.58-bit
+  is the format the model was trained in, not lossy compression.
+- New models with no submissions yet (e.g. a just-released model) ship as labelled
+  alternates with a size-estimated `min_ram` and **auto-promote** to real `obs_tg` /
+  measured `min_ram` on the next run once submissions land.
+
+### v2 changes vs the hand-curated v1
+
+- **Lossy sub-3-bit quants removed; native low-bit kept.** Post-training quantization to
+  1-2 bit wrecks quality, so it's no longer eligible as a default. But **Bonsai** (PrismML)
+  is *trained natively* at 1.58-bit (BitNet b1.58 / ternary) — there 1-bit is the format,
+  not lossy compression — so it stays, via the `native_low_bit` flag. It's placed as a
+  prominent **alternate** (8B-class at ~1.2GB is a showcase on high/flagship; 240MB/130tg
+  Bonsai-1.7B on low), not the silent primary, until we have our own quality eval.
+- **Primary is now the best general model per tier**, not the smallest. (v1's cumulative-
+  ascending ordering led flagship users with Qwen3-0.6B.)
+- **Per-tier minimum model size.** The cumulative cascade no longer reaches all the way
+  down: a tier only offers models worth running on a device that capable. `low` keeps the
+  ultralights (350M/0.6B/1B); `mid`/`high`/`flagship` floor at 1B, so a 6-8GB phone is no
+  longer suggested a 350M model. Keeps one fast/light 1B option without the sub-1B clutter.
+- **Filled the mid "sweet spot."** `mid` spans 4-6GB phones (memory cap ~4.7GB), where a
+  4B doesn't fit, so it's served by 1.5-3B models. Added **Qwen3-1.7B** (fast text),
+  **Qwen3.5-2B** (multimodal), and the recent **LFM2.5-1.2B** / **LFM2-2.6B** (Liquid AI,
+  on-device-first hybrid arch) so mid is a real, current selection — not just one 3B + one 1B.
+  (Qwen3.5-2B is dropped from Android mid on memory — p90 peak 5.0GB > cap — but kept on iOS.)
+- **Max ~6 candidates per tier** (`MAX_PER_TIER`). A cap, not a target: short tiers stay
+  short (never padded with models that don't fit). The trim is diversity-preserving — it
+  always keeps the top-ranked models (incl. the primary) plus a guaranteed fast/light
+  option and a multimodal option, instead of truncating those (which live at the list tail).
+- **Gemma added** — Gemma 3 1B/4B, Gemma 3n E2B/E4B, and **Gemma 4 E2B/E4B** (now
+  data-validated: E4B ~6.5, E2B ~9 tg on flagship Android — supersedes the v1 "below the
+  12-tg floor" exclusion).
+- **Empirical finding:** Qwen3.5-4B is dropped on Android (real median tg 3.9–4.3 — the
+  gated-DeltaNet path is slow on CPU); it stays on iOS/Metal where it measures ~10–13 tg.
+- **iOS uses Q4_K_M** (Metal, no Hexagon) rather than inheriting the Android Q4_0 policy.
+- **`min_ram_gb` is now per-model, not per-tier**, and seeded from the team's measured
+  6-device + Myron bench (`MEASURED_MIN_RAM` in the generator). Peak memory is a property
+  of the model, not the tier — v1 showed the *same* model with different RAM per tier
+  (gemma-3-4b 4.5 in high / 2.9 in flagship). Measured values also correct systematic
+  under-estimates: Bonsai is file+KV not file-size (1.7B 0.4→1.3, 8B 1.4→2.1); Gemma 3
+  adds a ~520MB compute buffer (1B 1.4→1.8); mistral arch is compute-heavy (ministral
+  2.6→3.4); gemma-4-e4b 6.0→7.3; qwen3.5-4b 3.0→4.5. The community peak telemetry can't
+  be used for this — see the data-source note below.
+
+> **Data sources & a known bug.** `obs_tg` (token-gen) comes from community benchmark
+> submissions. The canonical store is **Turso** (~9k rows, current, includes Bonsai), but
+> its `peak_memory_usage` column is **corrupted** — stored as the literal string
+> `"[object Object]"` for ~all rows (a `JSON.stringify` bug in the submission write path),
+> so memory CANNOT be derived from it. That's why `min_ram_gb` uses hand-measured values.
+> Bonsai's `obs_tg` is seeded from Turso's clean `tg_avg` (absent from the older Firestore
+> CSV), **platform-specific** — the 1-bit kernel is slow on Android CPU but fast on
+> iOS/Metal (Bonsai-8B ≈ 3.6 tg Android vs ≈ 20 tg on an iPhone 13 Pro), so a single
+> number would be wrong on one platform. Fixing the ingestion bug + pointing the
+> generator at Turso (it lacks the SoC/CPU columns the Android classifier needs) are the
+> two open data-plumbing follow-ups.
+
 ## v2 follow-ups
 
+- **Fix the `peak_memory_usage` ingestion bug** (Turso stores `"[object Object]"` instead
+  of the JSON) so community peak telemetry becomes usable and `min_ram_gb` can be
+  data-derived again instead of hand-measured.
+- **Wire the generator to Turso** (the canonical, current store with Bonsai) — needs a
+  device→SoC mapping since Turso lacks the CPU-feature columns the Android classifier uses,
+  and gives every model real per-tier `obs_tg` (incl. Bonsai) instead of seeded fallbacks.
+- Add a **quality floor** to gating (reuse the GEval/Grok judge harness): a model can't be
+  a default unless it clears a small fixed-prompt quality bar at its shipped quant. This is
+  what makes dropping 1-bit principled rather than a judgement call.
+- iOS flagship tier is sparsely sampled (most iPhone 16 Pro = 8 GiB → `high`, not
+  `flagship`); several iOS flagship entries are size-estimated pending submissions.
 - Re-bench with Gemma-4-E4B unlocked (right at the floor).
 - Backend-aware perf-hints overlay: Hex Q4_0 acceleration is a real perf win on phi-4-mini-reasoning that we leave on the table in CPU-floor v1.
 - 8B model coverage: future Bonsai versions with an optimized Q1_0 kernel might unlock flagship 8B-class recommendations.
