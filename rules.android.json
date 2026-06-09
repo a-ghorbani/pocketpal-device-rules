@@ -433,7 +433,7 @@
           "quant": "q4_0",
           "hf_repo": "bartowski/microsoft_Phi-4-mini-instruct-GGUF",
           "hf_filename": "microsoft_Phi-4-mini-instruct-Q4_0.gguf",
-          "min_ram_gb": 4.4,
+          "min_ram_gb": 4.1,
           "obs_tg": 6.2
         },
         {

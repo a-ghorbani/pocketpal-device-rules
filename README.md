@@ -183,8 +183,15 @@ How models are chosen:
   aggressive), so Android sits ~0.2–0.6 GB higher. Measured values also corrected systematic
   estimate errors in both directions (qwen3-0.6b est 1.8 → 1.2/1.3 measured; smollm3-3b est
   2.4 → 2.8/3.1; Bonsai file+KV not file-size; Gemma/Mistral compute buffer). The community
-  peak telemetry can't supply this — see the data-source note below. (Still estimated,
-  pending measurement: phi-4-mini-instruct, gemma-3n-e2b/e4b.)
+  peak telemetry can't supply this — see the data-source note below. **All shipped models
+  are now measured** (phi-4-mini-instruct 4.1; smoke-2 run, MODELRULES-2).
+- **Gemma 3n is text-only here, deliberately.** Its draw is on-device audio+vision, but no
+  usable quantized mmproj exists (E2B: none on HF; E4B: only a third-party F16, +2 GB). In
+  PocketPal it's effectively text-only — and as text it's superseded by gemma-4 E-series
+  (newer, same niche, *with* working GGUF projectors: unsloth/ggml-org ship `mmproj-*`). So
+  gemma-3n's `multimodal` flag was dropped; it's a low-ranked text alternate, candidate for
+  removal. (Our other multimodal picks — gemma-4 E2B/E4B, Qwen3-VL-4B, Qwen3.5 — all have
+  verified GGUF projectors.)
 
 > **Data sources & a known bug.** `obs_tg` (token-gen) comes from community benchmark
 > submissions. The canonical store is **Turso** (~9k rows, current, includes Bonsai), but
