@@ -169,9 +169,16 @@ How models are chosen:
   short (never padded with models that don't fit). The trim is diversity-preserving — it
   always keeps the top-ranked models (incl. the primary) plus a guaranteed fast/light
   option and a multimodal option, instead of truncating those (which live at the list tail).
-- **Gemma added** — Gemma 3 1B/4B, Gemma 3n E2B/E4B, and **Gemma 4 E2B/E4B** (now
-  data-validated: E4B ~6.5, E2B ~9 tg on flagship Android — supersedes the v1 "below the
-  12-tg floor" exclusion).
+- **Gemma added** — Gemma 3 1B/4B and **Gemma 4 E2B/E4B** (now data-validated: E4B ~6.5,
+  E2B ~9 tg on flagship Android — supersedes the v1 "below the 12-tg floor" exclusion).
+- **LFM2.5-8B-A1B added (flagship-only alternate).** Liquid AI's on-device Mixture-of-Experts
+  (2026-05-28): 8.3B total / ~1.5B active per token (32 experts, top-4), so it decodes at
+  ~1.5B cost (~30 tg on phones) while vendor-claiming 3–4B-class quality. All experts stay
+  resident, so memory is 8B-class — **measured on-device 6.2 GB (iOS) / 6.3 GB (Android)**
+  (MODELRULES-2). **Flagship-only, not high** — 6.3 GB would never fit an 8 GB high-tier
+  device once OS + app overhead is counted. Runtime verified: PocketPal's `llama.rn` 0.12.4
+  bundles the `lfm2moe` arch. lfm1.0 license (same as our shipped dense LFM2). Shipped as an
+  **alternate, not primary** — quality is still vendor-claimed pending our own eval (MODELRULES-6).
 - **Empirical finding:** Qwen3.5-4B is dropped on Android (real median tg 3.9–4.3 — the
   gated-DeltaNet path is slow on CPU); it stays on iOS/Metal where it measures ~10–13 tg.
 - **iOS uses Q4_K_M** (Metal, no Hexagon) rather than inheriting the Android Q4_0 policy.
@@ -185,13 +192,13 @@ How models are chosen:
   2.4 → 2.8/3.1; Bonsai file+KV not file-size; Gemma/Mistral compute buffer). The community
   peak telemetry can't supply this — see the data-source note below. **All shipped models
   are now measured** (phi-4-mini-instruct 4.1; smoke-2 run, MODELRULES-2).
-- **Gemma 3n is text-only here, deliberately.** Its draw is on-device audio+vision, but no
-  usable quantized mmproj exists (E2B: none on HF; E4B: only a third-party F16, +2 GB). In
-  PocketPal it's effectively text-only — and as text it's superseded by gemma-4 E-series
-  (newer, same niche, *with* working GGUF projectors: unsloth/ggml-org ship `mmproj-*`). So
-  gemma-3n's `multimodal` flag was dropped; it's a low-ranked text alternate, candidate for
-  removal. (Our other multimodal picks — gemma-4 E2B/E4B, Qwen3-VL-4B, Qwen3.5 — all have
-  verified GGUF projectors.)
+- **Gemma 3n removed (2026-06-09).** Its only draw was on-device audio+vision, but no usable
+  quantized mmproj exists (E2B: none on HF; E4B: only a third-party F16, +2 GB), so in
+  PocketPal it was effectively text-only — and as text it's strictly superseded by the
+  gemma-4 E-series (newer, same niche, *with* working GGUF projectors: unsloth/ggml-org ship
+  `mmproj-*`), which we already ship on high/flagship. Carrying it as a stale text-only
+  alternate added clutter and no value, so it was dropped rather than kept. (Our multimodal
+  picks — gemma-4 E2B/E4B, Qwen3-VL-4B, Qwen3.5 — all have verified GGUF projectors.)
 
 > **Data sources & a known bug.** `obs_tg` (token-gen) comes from community benchmark
 > submissions. The canonical store is **Turso** (~9k rows, current, includes Bonsai), but
