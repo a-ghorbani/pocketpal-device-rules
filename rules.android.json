@@ -429,10 +429,10 @@
           "native_low_bit": true
         },
         {
-          "model": "phi-4-mini-reasoning",
+          "model": "phi-4-mini-instruct",
           "quant": "q4_0",
-          "hf_repo": "bartowski/microsoft_Phi-4-mini-reasoning-GGUF",
-          "hf_filename": "microsoft_Phi-4-mini-reasoning-Q4_0.gguf",
+          "hf_repo": "bartowski/microsoft_Phi-4-mini-instruct-GGUF",
+          "hf_filename": "microsoft_Phi-4-mini-instruct-Q4_0.gguf",
           "min_ram_gb": 4.4,
           "obs_tg": 6.2
         },
