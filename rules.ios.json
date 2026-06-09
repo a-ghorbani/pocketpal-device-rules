@@ -2,239 +2,507 @@
   "$schema": "https://raw.githubusercontent.com/a-ghorbani/pocketpal-device-rules/main/schema/rules.v1.schema.json",
   "schema_version": "1.0.0-draft",
   "platform": "ios",
-  "rules_version": "2026-06-07.1",
+  "rules_version": "2026-06-07.2",
   "generated_at": "2026-06-07T00:00:00Z",
-  "notes": "FOU-99 v1 iOS — chip-based classifier sourced from pocketpal-website APPLE_DEVICES. Mid-tier Bonsai Q1_0 numbers measured on iPhone 13 Pro / A15; high+flagship are mostly extrapolated. Methodology and limitations in README.",
+  "notes": "FOU-99 v2 ios — candidates generated from community benchmark submissions (real device tg + peak memory) by the gen-device-rules.py tool in the advisory repo. 1-bit quants removed; primary = best general model per tier. Classifier/tier_matrix unchanged.",
   "_status": "v1-partial-measured",
   "_quant_policy": "Q4_K_M is primary for Q4 family on Metal (no Q4_0 fastpath like Android Hex). Metal HAS a Q1_0 fastpath that Android lacks — Bonsai variants are real speed+footprint plays on iOS.",
   "_selection_policy": {
     "rule": "Candidate enters tier T iff (Metal TG ngl=99 on rep_device[T] >= tier_floors_metal_tg[T]) AND (peak_load_mem fits ram_band[T] with iOS jetsam margin). Within a tier, candidates are ORDERED — first per model is the primary recommendation.",
-    "tier_floors_metal_tg": { "low": 5, "mid": 8, "high": 10, "flagship": 12 },
+    "tier_floors_metal_tg": {
+      "low": 5,
+      "mid": 8,
+      "high": 10,
+      "flagship": 12
+    },
     "rep_devices": {
-      "low":        { "name": "iPhone XR / iPhone 11",                            "chip": "A12 / A13",               "ram_band": "3-4" },
-      "mid":        { "name": "iPhone 13 Pro (iPhone14,2)",                       "chip": "A15",                     "ram_band": "4-6" },
-      "high":       { "name": "iPhone 15 / iPhone 16",                            "chip": "A16 / A18",               "ram_band": "6-8" },
-      "flagship_A": { "name": "iPhone 17 Pro / Pro Max / Air",                    "chip": "A18 Pro / A19 / A19 Pro", "ram_band": "8-plus" },
-      "flagship_M": { "name": "iPad Pro M2+ / iPad Air M3+",                      "chip": "M2 / M3 / M4 / M5",       "ram_band": "8-plus" }
+      "low": {
+        "name": "iPhone XR / iPhone 11",
+        "chip": "A12 / A13",
+        "ram_band": "3-4"
+      },
+      "mid": {
+        "name": "iPhone 13 Pro (iPhone14,2)",
+        "chip": "A15",
+        "ram_band": "4-6"
+      },
+      "high": {
+        "name": "iPhone 15 / iPhone 16",
+        "chip": "A16 / A18",
+        "ram_band": "6-8"
+      },
+      "flagship_A": {
+        "name": "iPhone 17 Pro / Pro Max / Air",
+        "chip": "A18 Pro / A19 / A19 Pro",
+        "ram_band": "8-plus"
+      },
+      "flagship_M": {
+        "name": "iPad Pro M2+ / iPad Air M3+",
+        "chip": "M2 / M3 / M4 / M5",
+        "ram_band": "8-plus"
+      }
     },
     "flagship_split_note": "Flagship is bifurcated: A-Pro iPhones ≈ 12-15 TG vs M-series 22-29 TG on 3-4B Q4_K_M. Floor is checked on flagship_A (conservative); numbers that only clear on M-series are listed but flagged as 'iPad/Mac usable'.",
     "os_killer_margin": "iOS jetsam: 6 GiB iPhone tolerates ~1.7 GB peak (Bonsai-8B Q1_0); 8 GiB iPhone ~3-3.5 GB; M-series iPad 8+ GiB ~6 GB. Used to exclude Qwen3.5-9B Q4_K_M on 8 GiB iPhones."
   },
-
   "classifier": {
     "ram_bands": [
-      { "id": "lt-3",    "max_bytes": 3221225472,    "label": "< 3 GiB" },
-      { "id": "3-4",     "max_bytes": 4294967296,    "label": "3-4 GiB" },
-      { "id": "4-6",     "max_bytes": 6442450944,    "label": "4-6 GiB" },
-      { "id": "6-8",     "max_bytes": 8589934592,    "label": "6-8 GiB" },
-      { "id": "8-plus",  "max_bytes": null,          "label": "8+ GiB" }
+      {
+        "id": "lt-3",
+        "max_bytes": 3221225472,
+        "label": "< 3 GiB"
+      },
+      {
+        "id": "3-4",
+        "max_bytes": 4294967296,
+        "label": "3-4 GiB"
+      },
+      {
+        "id": "4-6",
+        "max_bytes": 6442450944,
+        "label": "4-6 GiB"
+      },
+      {
+        "id": "6-8",
+        "max_bytes": 8589934592,
+        "label": "6-8 GiB"
+      },
+      {
+        "id": "8-plus",
+        "max_bytes": null,
+        "label": "8+ GiB"
+      }
     ],
-
-    "soc_classes": ["entry", "mid", "flagship"],
-
+    "soc_classes": [
+      "entry",
+      "mid",
+      "flagship"
+    ],
     "device_id_to_chip": {
-      "iPhone10,1":  "A11",
-      "iPhone10,2":  "A11",
-      "iPhone10,3":  "A11",
-      "iPhone10,4":  "A11",
-      "iPhone10,5":  "A11",
-      "iPhone10,6":  "A11",
-
-      "iPhone11,2":  "A12",
-      "iPhone11,4":  "A12",
-      "iPhone11,6":  "A12",
-      "iPhone11,8":  "A12",
-
-      "iPhone12,1":  "A13",
-      "iPhone12,3":  "A13",
-      "iPhone12,5":  "A13",
-      "iPhone12,8":  "A13",
-
-      "iPhone13,1":  "A14",
-      "iPhone13,2":  "A14",
-      "iPhone13,3":  "A14",
-      "iPhone13,4":  "A14",
-
-      "iPhone14,2":  "A15",
-      "iPhone14,3":  "A15",
-      "iPhone14,4":  "A15",
-      "iPhone14,5":  "A15",
-      "iPhone14,6":  "A15",
-      "iPhone14,7":  "A15",
-      "iPhone14,8":  "A15",
-
-      "iPhone15,2":  "A16",
-      "iPhone15,3":  "A16",
-      "iPhone15,4":  "A16",
-      "iPhone15,5":  "A16",
-
-      "iPhone16,1":  "A17 Pro",
-      "iPhone16,2":  "A17 Pro",
-
-      "iPhone17,1":  "A18 Pro",
-      "iPhone17,2":  "A18 Pro",
-      "iPhone17,3":  "A18",
-      "iPhone17,4":  "A18",
-      "iPhone17,5":  "A18",
-
-      "iPhone18,1":  "A19 Pro",
-      "iPhone18,2":  "A19 Pro",
-      "iPhone18,3":  "A19",
-      "iPhone18,4":  "A19",
-
-      "iPad7,11":    "A10",
-      "iPad7,12":    "A10",
-      "iPad11,1":    "A12",
-      "iPad11,2":    "A12",
-      "iPad11,3":    "A12",
-      "iPad11,4":    "A12",
-      "iPad11,6":    "A13",
-      "iPad11,7":    "A13",
-      "iPad12,1":    "A13",
-      "iPad12,2":    "A13",
-      "iPad13,1":    "A14",
-      "iPad13,2":    "A14",
-      "iPad13,4":    "M1",
-      "iPad13,5":    "M1",
-      "iPad13,6":    "M1",
-      "iPad13,7":    "M1",
-      "iPad13,8":    "M1",
-      "iPad13,9":    "M1",
-      "iPad13,10":   "M1",
-      "iPad13,11":   "M1",
-      "iPad13,16":   "M1",
-      "iPad13,17":   "M1",
-      "iPad13,18":   "A14",
-      "iPad13,19":   "A14",
-      "iPad14,1":    "A15",
-      "iPad14,2":    "A15",
-      "iPad14,3":    "M2",
-      "iPad14,4":    "M2",
-      "iPad14,5":    "M2",
-      "iPad14,6":    "M2",
-      "iPad14,8":    "M2",
-      "iPad14,9":    "M2",
-      "iPad14,10":   "M2",
-      "iPad14,11":   "M2",
-      "iPad15,3":    "M3",
-      "iPad15,4":    "M3",
-      "iPad15,5":    "M3",
-      "iPad15,6":    "M3",
-      "iPad15,7":    "A16",
-      "iPad15,8":    "A16",
-      "iPad16,1":    "A17 Pro",
-      "iPad16,2":    "A17 Pro",
-      "iPad16,3":    "M4",
-      "iPad16,4":    "M4",
-      "iPad16,5":    "M4",
-      "iPad16,6":    "M4",
-      "iPad17,1":    "M5",
-      "iPad17,2":    "M5",
-      "iPad17,3":    "M5",
-      "iPad17,4":    "M5"
+      "iPhone10,1": "A11",
+      "iPhone10,2": "A11",
+      "iPhone10,3": "A11",
+      "iPhone10,4": "A11",
+      "iPhone10,5": "A11",
+      "iPhone10,6": "A11",
+      "iPhone11,2": "A12",
+      "iPhone11,4": "A12",
+      "iPhone11,6": "A12",
+      "iPhone11,8": "A12",
+      "iPhone12,1": "A13",
+      "iPhone12,3": "A13",
+      "iPhone12,5": "A13",
+      "iPhone12,8": "A13",
+      "iPhone13,1": "A14",
+      "iPhone13,2": "A14",
+      "iPhone13,3": "A14",
+      "iPhone13,4": "A14",
+      "iPhone14,2": "A15",
+      "iPhone14,3": "A15",
+      "iPhone14,4": "A15",
+      "iPhone14,5": "A15",
+      "iPhone14,6": "A15",
+      "iPhone14,7": "A15",
+      "iPhone14,8": "A15",
+      "iPhone15,2": "A16",
+      "iPhone15,3": "A16",
+      "iPhone15,4": "A16",
+      "iPhone15,5": "A16",
+      "iPhone16,1": "A17 Pro",
+      "iPhone16,2": "A17 Pro",
+      "iPhone17,1": "A18 Pro",
+      "iPhone17,2": "A18 Pro",
+      "iPhone17,3": "A18",
+      "iPhone17,4": "A18",
+      "iPhone17,5": "A18",
+      "iPhone18,1": "A19 Pro",
+      "iPhone18,2": "A19 Pro",
+      "iPhone18,3": "A19",
+      "iPhone18,4": "A19",
+      "iPad7,11": "A10",
+      "iPad7,12": "A10",
+      "iPad11,1": "A12",
+      "iPad11,2": "A12",
+      "iPad11,3": "A12",
+      "iPad11,4": "A12",
+      "iPad11,6": "A13",
+      "iPad11,7": "A13",
+      "iPad12,1": "A13",
+      "iPad12,2": "A13",
+      "iPad13,1": "A14",
+      "iPad13,2": "A14",
+      "iPad13,4": "M1",
+      "iPad13,5": "M1",
+      "iPad13,6": "M1",
+      "iPad13,7": "M1",
+      "iPad13,8": "M1",
+      "iPad13,9": "M1",
+      "iPad13,10": "M1",
+      "iPad13,11": "M1",
+      "iPad13,16": "M1",
+      "iPad13,17": "M1",
+      "iPad13,18": "A14",
+      "iPad13,19": "A14",
+      "iPad14,1": "A15",
+      "iPad14,2": "A15",
+      "iPad14,3": "M2",
+      "iPad14,4": "M2",
+      "iPad14,5": "M2",
+      "iPad14,6": "M2",
+      "iPad14,8": "M2",
+      "iPad14,9": "M2",
+      "iPad14,10": "M2",
+      "iPad14,11": "M2",
+      "iPad15,3": "M3",
+      "iPad15,4": "M3",
+      "iPad15,5": "M3",
+      "iPad15,6": "M3",
+      "iPad15,7": "A16",
+      "iPad15,8": "A16",
+      "iPad16,1": "A17 Pro",
+      "iPad16,2": "A17 Pro",
+      "iPad16,3": "M4",
+      "iPad16,4": "M4",
+      "iPad16,5": "M4",
+      "iPad16,6": "M4",
+      "iPad17,1": "M5",
+      "iPad17,2": "M5",
+      "iPad17,3": "M5",
+      "iPad17,4": "M5"
     },
-
     "chip_to_class": {
-      "A10":     "entry",
-      "A11":     "entry",
-      "A12":     "entry",
-      "A12X":    "entry",
-      "A12Z":    "entry",
-      "A13":     "entry",
-      "A14":     "mid",
-      "A15":     "mid",
-      "A16":     "mid",
-      "A17":     "mid",
+      "A10": "entry",
+      "A11": "entry",
+      "A12": "entry",
+      "A12X": "entry",
+      "A12Z": "entry",
+      "A13": "entry",
+      "A14": "mid",
+      "A15": "mid",
+      "A16": "mid",
+      "A17": "mid",
       "A17 Pro": "flagship",
-      "A18":     "mid",
+      "A18": "mid",
       "A18 Pro": "flagship",
-      "A19":     "flagship",
+      "A19": "flagship",
       "A19 Pro": "flagship",
-      "M1":      "flagship",
-      "M2":      "flagship",
-      "M3":      "flagship",
-      "M4":      "flagship",
-      "M5":      "flagship"
+      "M1": "flagship",
+      "M2": "flagship",
+      "M3": "flagship",
+      "M4": "flagship",
+      "M5": "flagship"
     },
-
     "device_family_fallback": {
       "rules": [
-        { "match": { "id_prefix": "iPhone", "id_major_min": 18 },                          "class": "flagship" },
-        { "match": { "id_prefix": "iPhone", "id_major_min": 15 },                          "class": "mid" },
-        { "match": { "id_prefix": "iPad",   "id_major_min": 16, "min_ram_bytes": 8589934592 }, "class": "flagship" },
-        { "match": { "id_prefix": "iPad" },                                                "class": "mid" },
-        { "match": {},                                                                     "class": "entry" }
+        {
+          "match": {
+            "id_prefix": "iPhone",
+            "id_major_min": 18
+          },
+          "class": "flagship"
+        },
+        {
+          "match": {
+            "id_prefix": "iPhone",
+            "id_major_min": 15
+          },
+          "class": "mid"
+        },
+        {
+          "match": {
+            "id_prefix": "iPad",
+            "id_major_min": 16,
+            "min_ram_bytes": 8589934592
+          },
+          "class": "flagship"
+        },
+        {
+          "match": {
+            "id_prefix": "iPad"
+          },
+          "class": "mid"
+        },
+        {
+          "match": {},
+          "class": "entry"
+        }
       ]
     },
-
     "tier_matrix": [
-      { "ram_band": "lt-3",    "soc_class": "entry",    "tier": "low" },
-      { "ram_band": "lt-3",    "soc_class": "mid",      "tier": "low" },
-      { "ram_band": "lt-3",    "soc_class": "flagship", "tier": "low" },
-
-      { "ram_band": "3-4",     "soc_class": "entry",    "tier": "low" },
-      { "ram_band": "3-4",     "soc_class": "mid",      "tier": "low" },
-      { "ram_band": "3-4",     "soc_class": "flagship", "tier": "mid" },
-
-      { "ram_band": "4-6",     "soc_class": "entry",    "tier": "low" },
-      { "ram_band": "4-6",     "soc_class": "mid",      "tier": "mid" },
-      { "ram_band": "4-6",     "soc_class": "flagship", "tier": "high" },
-
-      { "ram_band": "6-8",     "soc_class": "entry",    "tier": "mid" },
-      { "ram_band": "6-8",     "soc_class": "mid",      "tier": "high" },
-      { "ram_band": "6-8",     "soc_class": "flagship", "tier": "high" },
-
-      { "ram_band": "8-plus",  "soc_class": "entry",    "tier": "mid" },
-      { "ram_band": "8-plus",  "soc_class": "mid",      "tier": "high" },
-      { "ram_band": "8-plus",  "soc_class": "flagship", "tier": "flagship" }
+      {
+        "ram_band": "lt-3",
+        "soc_class": "entry",
+        "tier": "low"
+      },
+      {
+        "ram_band": "lt-3",
+        "soc_class": "mid",
+        "tier": "low"
+      },
+      {
+        "ram_band": "lt-3",
+        "soc_class": "flagship",
+        "tier": "low"
+      },
+      {
+        "ram_band": "3-4",
+        "soc_class": "entry",
+        "tier": "low"
+      },
+      {
+        "ram_band": "3-4",
+        "soc_class": "mid",
+        "tier": "low"
+      },
+      {
+        "ram_band": "3-4",
+        "soc_class": "flagship",
+        "tier": "mid"
+      },
+      {
+        "ram_band": "4-6",
+        "soc_class": "entry",
+        "tier": "low"
+      },
+      {
+        "ram_band": "4-6",
+        "soc_class": "mid",
+        "tier": "mid"
+      },
+      {
+        "ram_band": "4-6",
+        "soc_class": "flagship",
+        "tier": "high"
+      },
+      {
+        "ram_band": "6-8",
+        "soc_class": "entry",
+        "tier": "mid"
+      },
+      {
+        "ram_band": "6-8",
+        "soc_class": "mid",
+        "tier": "high"
+      },
+      {
+        "ram_band": "6-8",
+        "soc_class": "flagship",
+        "tier": "high"
+      },
+      {
+        "ram_band": "8-plus",
+        "soc_class": "entry",
+        "tier": "mid"
+      },
+      {
+        "ram_band": "8-plus",
+        "soc_class": "mid",
+        "tier": "high"
+      },
+      {
+        "ram_band": "8-plus",
+        "soc_class": "flagship",
+        "tier": "flagship"
+      }
     ]
   },
-
   "tiers": {
     "low": {
-      "description": "Sub-1B models only. A12/A13 iPhones with 3-4 GiB. Metal TG floor ≥5.",
+      "description": "4 candidate(s); primary: gemma-3-1b. Generated from community benchmarks.",
       "candidates": [
-        { "model": "qwen3-0.6b",   "quant": "q4_k_m", "hf_repo": "bartowski/Qwen_Qwen3-0.6B-GGUF", "hf_filename": "Qwen_Qwen3-0.6B-Q4_K_M.gguf", "min_ram_gb": 1.5, "obs_tg_estimate": 5.0 },
-        { "model": "lfm2.5-350m",  "quant": "q4_k_m", "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",      "hf_filename": "LFM2.5-350M-Q4_K_M.gguf",     "min_ram_gb": 1.0, "obs_tg_estimate": 7.0 },
-        { "model": "lfm2.5-350m",  "quant": "q8_0",   "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",      "hf_filename": "LFM2.5-350M-Q8_0.gguf",       "min_ram_gb": 1.0, "obs_tg_estimate": 6.5 }
+        {
+          "model": "gemma-3-1b",
+          "quant": "q4_k_m",
+          "hf_repo": "ggml-org/gemma-3-1b-it-GGUF",
+          "hf_filename": "gemma-3-1b-it-Q4_K_M.gguf",
+          "min_ram_gb": 1.8,
+          "obs_tg": 30.0
+        },
+        {
+          "model": "bonsai-1.7b",
+          "quant": "q1_0",
+          "hf_repo": "prism-ml/Bonsai-1.7B-gguf",
+          "hf_filename": "Bonsai-1.7B-Q1_0.gguf",
+          "min_ram_gb": 1.3,
+          "obs_tg": 51.2,
+          "native_low_bit": true
+        },
+        {
+          "model": "qwen3-0.6b",
+          "quant": "q4_k_m",
+          "hf_repo": "bartowski/Qwen_Qwen3-0.6B-GGUF",
+          "hf_filename": "Qwen_Qwen3-0.6B-Q4_K_M.gguf",
+          "min_ram_gb": 1.2,
+          "obs_tg": 49.3
+        },
+        {
+          "model": "lfm2.5-350m",
+          "quant": "q4_k_m",
+          "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",
+          "hf_filename": "LFM2.5-350M-Q4_K_M.gguf",
+          "min_ram_gb": 1.1,
+          "obs_tg": 88.2
+        }
       ]
     },
     "mid": {
-      "description": "A14/A15/A16/A18-base iPhones, 4-6 GiB. Metal TG floor ≥8. Bonsai Q1_0 viable here (Metal fastpath).",
+      "description": "6 candidate(s); primary: smollm3-3b. Generated from community benchmarks.",
       "candidates": [
-        { "model": "qwen3-0.6b",   "quant": "q4_k_m", "hf_repo": "bartowski/Qwen_Qwen3-0.6B-GGUF", "hf_filename": "Qwen_Qwen3-0.6B-Q4_K_M.gguf", "min_ram_gb": 1.5, "obs_tg": 30.0 },
-        { "model": "lfm2.5-350m",  "quant": "q4_k_m", "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",      "hf_filename": "LFM2.5-350M-Q4_K_M.gguf",     "min_ram_gb": 1.0, "obs_tg_estimate": 60.0 },
-        { "model": "lfm2.5-350m",  "quant": "q8_0",   "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",      "hf_filename": "LFM2.5-350M-Q8_0.gguf",       "min_ram_gb": 1.0, "obs_tg_estimate": 50.0 },
-        { "model": "bonsai-1.7b",  "quant": "q1_0",   "hf_repo": "prism-ml/Bonsai-1.7B-gguf",      "hf_filename": "Bonsai-1.7B-Q1_0.gguf",       "min_ram_gb": 1.5, "obs_tg": 51.2 },
-        { "model": "bonsai-4b",    "quant": "q1_0",   "hf_repo": "prism-ml/Bonsai-4B-gguf",       "hf_filename": "Bonsai-4B-Q1_0.gguf",         "min_ram_gb": 3.0, "obs_tg": 33.0 },
-        { "model": "bonsai-8b",    "quant": "q1_0",   "hf_repo": "prism-ml/Bonsai-8B-gguf",       "hf_filename": "Bonsai-8B-Q1_0.gguf",         "min_ram_gb": 4.5, "obs_tg": 19.9 }
+        {
+          "model": "smollm3-3b",
+          "quant": "q4_k_m",
+          "hf_repo": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF",
+          "hf_filename": "HuggingFaceTB_SmolLM3-3B-Q4_K_M.gguf",
+          "min_ram_gb": 2.8
+        },
+        {
+          "model": "lfm2-2.6b",
+          "quant": "q4_k_m",
+          "hf_repo": "LiquidAI/LFM2-2.6B-GGUF",
+          "hf_filename": "LFM2-2.6B-Q4_K_M.gguf",
+          "min_ram_gb": 2.3,
+          "obs_tg": 25.4
+        },
+        {
+          "model": "qwen3-1.7b",
+          "quant": "q4_k_m",
+          "hf_repo": "bartowski/Qwen_Qwen3-1.7B-GGUF",
+          "hf_filename": "Qwen_Qwen3-1.7B-Q4_K_M.gguf",
+          "min_ram_gb": 2.0,
+          "obs_tg": 23.8
+        },
+        {
+          "model": "lfm2.5-1.2b",
+          "quant": "q4_k_m",
+          "hf_repo": "LiquidAI/LFM2.5-1.2B-Instruct-GGUF",
+          "hf_filename": "LFM2.5-1.2B-Instruct-Q4_K_M.gguf",
+          "min_ram_gb": 1.3,
+          "obs_tg": 54.9
+        },
+        {
+          "model": "qwen3.5-2b",
+          "quant": "q4_k_m",
+          "hf_repo": "unsloth/Qwen3.5-2B-GGUF",
+          "hf_filename": "Qwen3.5-2B-Q4_K_M.gguf",
+          "min_ram_gb": 2.4,
+          "obs_tg": 18.8,
+          "multimodal": true
+        },
+        {
+          "model": "gemma-3-1b",
+          "quant": "q4_k_m",
+          "hf_repo": "ggml-org/gemma-3-1b-it-GGUF",
+          "hf_filename": "gemma-3-1b-it-Q4_K_M.gguf",
+          "min_ram_gb": 1.8,
+          "obs_tg": 36.2
+        }
       ]
     },
     "high": {
-      "description": "A16/A18 iPhones, 6-8 GiB. Metal TG floor ≥10. Extrapolated ~×1.4 from A15 mid anchors.",
+      "description": "6 candidate(s); primary: gemma-3-4b. Generated from community benchmarks.",
       "candidates": [
-        { "model": "qwen3-0.6b",   "quant": "q4_k_m", "hf_repo": "bartowski/Qwen_Qwen3-0.6B-GGUF",          "hf_filename": "Qwen_Qwen3-0.6B-Q4_K_M.gguf",          "min_ram_gb": 1.5, "obs_tg_estimate": 60.0 },
-        { "model": "lfm2.5-350m",  "quant": "q4_k_m", "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",               "hf_filename": "LFM2.5-350M-Q4_K_M.gguf",              "min_ram_gb": 1.0, "obs_tg_estimate": 90.0 },
-        { "model": "lfm2.5-350m",  "quant": "q8_0",   "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",               "hf_filename": "LFM2.5-350M-Q8_0.gguf",                "min_ram_gb": 1.0, "obs_tg_estimate": 75.0 },
-        { "model": "bonsai-1.7b",  "quant": "q1_0",   "hf_repo": "prism-ml/Bonsai-1.7B-gguf",               "hf_filename": "Bonsai-1.7B-Q1_0.gguf",                "min_ram_gb": 1.5, "obs_tg_estimate": 70.0 },
-        { "model": "bonsai-4b",    "quant": "q1_0",   "hf_repo": "prism-ml/Bonsai-4B-gguf",                "hf_filename": "Bonsai-4B-Q1_0.gguf",                  "min_ram_gb": 3.0, "obs_tg_estimate": 45.0 },
-        { "model": "bonsai-8b",    "quant": "q1_0",   "hf_repo": "prism-ml/Bonsai-8B-gguf",                "hf_filename": "Bonsai-8B-Q1_0.gguf",                  "min_ram_gb": 5.0, "obs_tg_estimate": 28.0 },
-        { "model": "smollm3-3b",   "quant": "q4_k_m", "hf_repo": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF", "hf_filename": "HuggingFaceTB_SmolLM3-3B-Q4_K_M.gguf", "min_ram_gb": 3.0, "obs_tg_estimate": 28.0 }
+        {
+          "model": "gemma-3-4b",
+          "quant": "q4_k_m",
+          "hf_repo": "ggml-org/gemma-3-4b-it-GGUF",
+          "hf_filename": "gemma-3-4b-it-Q4_K_M.gguf",
+          "min_ram_gb": 4.1,
+          "obs_tg": 11.2
+        },
+        {
+          "model": "gemma-4-e2b",
+          "quant": "q4_k_m",
+          "hf_repo": "unsloth/gemma-4-E2B-it-GGUF",
+          "hf_filename": "gemma-4-E2B-it-Q4_K_M.gguf",
+          "min_ram_gb": 4.1,
+          "obs_tg": 33.0,
+          "multimodal": true
+        },
+        {
+          "model": "qwen3.5-4b",
+          "quant": "q4_k_m",
+          "hf_repo": "unsloth/Qwen3.5-4B-GGUF",
+          "hf_filename": "Qwen3.5-4B-Q4_K_M.gguf",
+          "min_ram_gb": 4.5,
+          "obs_tg": 10.5,
+          "multimodal": true
+        },
+        {
+          "model": "ministral-3-3b",
+          "quant": "q4_k_m",
+          "hf_repo": "bartowski/mistralai_Ministral-3-3B-Instruct-2512-GGUF",
+          "hf_filename": "mistralai_Ministral-3-3B-Instruct-2512-Q4_K_M.gguf",
+          "min_ram_gb": 3.4,
+          "obs_tg": 36.0
+        },
+        {
+          "model": "bonsai-8b",
+          "quant": "q1_0",
+          "hf_repo": "prism-ml/Bonsai-8B-gguf",
+          "hf_filename": "Bonsai-8B-Q1_0.gguf",
+          "min_ram_gb": 2.1,
+          "obs_tg": 20.0,
+          "native_low_bit": true
+        },
+        {
+          "model": "gemma-3-1b",
+          "quant": "q4_k_m",
+          "hf_repo": "ggml-org/gemma-3-1b-it-GGUF",
+          "hf_filename": "gemma-3-1b-it-Q4_K_M.gguf",
+          "min_ram_gb": 1.8,
+          "obs_tg": 45.7
+        }
       ]
     },
     "flagship": {
-      "description": "A18 Pro / A19 / A19 Pro / M-series, 8+ GiB. Metal TG floor ≥12 on flagship_A; M-series ~2× higher.",
+      "description": "6 candidate(s); primary: gemma-3-4b. Generated from community benchmarks.",
       "candidates": [
-        { "model": "qwen3-0.6b",            "quant": "q4_k_m", "hf_repo": "bartowski/Qwen_Qwen3-0.6B-GGUF",                         "hf_filename": "Qwen_Qwen3-0.6B-Q4_K_M.gguf",                        "min_ram_gb": 1.5, "obs_tg_estimate": 100.0 },
-        { "model": "lfm2.5-350m",           "quant": "q4_k_m", "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",                              "hf_filename": "LFM2.5-350M-Q4_K_M.gguf",                            "min_ram_gb": 1.0, "obs_tg_estimate": 200.0 },
-        { "model": "bonsai-1.7b",           "quant": "q1_0",   "hf_repo": "prism-ml/Bonsai-1.7B-gguf",                              "hf_filename": "Bonsai-1.7B-Q1_0.gguf",                              "min_ram_gb": 1.5, "obs_tg_estimate": 100.0 },
-        { "model": "bonsai-4b",             "quant": "q1_0",   "hf_repo": "prism-ml/Bonsai-4B-gguf",                                "hf_filename": "Bonsai-4B-Q1_0.gguf",                                "min_ram_gb": 3.0, "obs_tg_estimate": 65.0 },
-        { "model": "bonsai-8b",             "quant": "q1_0",   "hf_repo": "prism-ml/Bonsai-8B-gguf",                                "hf_filename": "Bonsai-8B-Q1_0.gguf",                                "min_ram_gb": 5.0, "obs_tg_estimate": 44.0 },
-        { "model": "smollm3-3b",            "quant": "q4_k_m", "hf_repo": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF",                "hf_filename": "HuggingFaceTB_SmolLM3-3B-Q4_K_M.gguf",                "min_ram_gb": 3.0, "obs_tg_estimate": 50.0 },
-        { "model": "qwen3.5-4b",            "quant": "q4_k_m", "hf_repo": "unsloth/Qwen3.5-4B-GGUF",                                "hf_filename": "Qwen3.5-4B-Q4_K_M.gguf",                             "min_ram_gb": 3.5, "obs_tg": 13.4, "obs_tg_a_pro": 13.4, "obs_tg_m_series": 22.0 },
-        { "model": "ministral-3-3b",        "quant": "q4_k_m", "hf_repo": "bartowski/mistralai_Ministral-3-3B-Instruct-2512-GGUF",  "hf_filename": "mistralai_Ministral-3-3B-Instruct-2512-Q4_K_M.gguf", "min_ram_gb": 2.5, "obs_tg_estimate": 28.0 },
-        { "model": "phi-4-mini-reasoning",  "quant": "q4_k_m", "hf_repo": "bartowski/microsoft_Phi-4-mini-reasoning-GGUF",          "hf_filename": "microsoft_Phi-4-mini-reasoning-Q4_K_M.gguf",         "min_ram_gb": 3.5, "obs_tg_estimate": 26.0 },
-        { "model": "qwen3-vl-4b-instruct",  "quant": "q4_k_m", "hf_repo": "Qwen/Qwen3-VL-4B-Instruct-GGUF",                         "hf_filename": "Qwen3VL-4B-Instruct-Q4_K_M.gguf",                    "min_ram_gb": 3.5, "obs_tg_estimate": 24.0 }
+        {
+          "model": "gemma-3-4b",
+          "quant": "q4_k_m",
+          "hf_repo": "ggml-org/gemma-3-4b-it-GGUF",
+          "hf_filename": "gemma-3-4b-it-Q4_K_M.gguf",
+          "min_ram_gb": 4.1
+        },
+        {
+          "model": "gemma-4-e4b",
+          "quant": "q4_k_m",
+          "hf_repo": "ggml-org/gemma-4-E4B-it-GGUF",
+          "hf_filename": "gemma-4-E4B-it-Q4_K_M.gguf",
+          "min_ram_gb": 7.3,
+          "multimodal": true
+        },
+        {
+          "model": "gemma-4-e2b",
+          "quant": "q4_k_m",
+          "hf_repo": "unsloth/gemma-4-E2B-it-GGUF",
+          "hf_filename": "gemma-4-E2B-it-Q4_K_M.gguf",
+          "min_ram_gb": 4.1,
+          "multimodal": true
+        },
+        {
+          "model": "qwen3.5-4b",
+          "quant": "q4_k_m",
+          "hf_repo": "unsloth/Qwen3.5-4B-GGUF",
+          "hf_filename": "Qwen3.5-4B-Q4_K_M.gguf",
+          "min_ram_gb": 4.5,
+          "multimodal": true
+        },
+        {
+          "model": "ministral-3-3b",
+          "quant": "q4_k_m",
+          "hf_repo": "bartowski/mistralai_Ministral-3-3B-Instruct-2512-GGUF",
+          "hf_filename": "mistralai_Ministral-3-3B-Instruct-2512-Q4_K_M.gguf",
+          "min_ram_gb": 3.4
+        },
+        {
+          "model": "gemma-3-1b",
+          "quant": "q4_k_m",
+          "hf_repo": "ggml-org/gemma-3-1b-it-GGUF",
+          "hf_filename": "gemma-3-1b-it-Q4_K_M.gguf",
+          "min_ram_gb": 1.8,
+          "obs_tg": 85.6
+        }
       ]
     }
   }
