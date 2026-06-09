@@ -332,7 +332,7 @@
           "quant": "q4_k_m",
           "hf_repo": "bartowski/Qwen_Qwen3-0.6B-GGUF",
           "hf_filename": "Qwen_Qwen3-0.6B-Q4_K_M.gguf",
-          "min_ram_gb": 1.7,
+          "min_ram_gb": 1.2,
           "obs_tg": 49.3
         },
         {
@@ -340,7 +340,7 @@
           "quant": "q4_k_m",
           "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",
           "hf_filename": "LFM2.5-350M-Q4_K_M.gguf",
-          "min_ram_gb": 0.8,
+          "min_ram_gb": 1.1,
           "obs_tg": 88.2
         }
       ]
@@ -353,7 +353,7 @@
           "quant": "q4_k_m",
           "hf_repo": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF",
           "hf_filename": "HuggingFaceTB_SmolLM3-3B-Q4_K_M.gguf",
-          "min_ram_gb": 2.4
+          "min_ram_gb": 2.8
         },
         {
           "model": "lfm2-2.6b",

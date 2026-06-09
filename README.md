@@ -175,14 +175,16 @@ How models are chosen:
 - **Empirical finding:** Qwen3.5-4B is dropped on Android (real median tg 3.9–4.3 — the
   gated-DeltaNet path is slow on CPU); it stays on iOS/Metal where it measures ~10–13 tg.
 - **iOS uses Q4_K_M** (Metal, no Hexagon) rather than inheriting the Android Q4_0 policy.
-- **`min_ram_gb` is now per-model, not per-tier**, and seeded from the team's measured
-  6-device + Myron bench (`MEASURED_MIN_RAM` in the generator). Peak memory is a property
-  of the model, not the tier — v1 showed the *same* model with different RAM per tier
-  (gemma-3-4b 4.5 in high / 2.9 in flagship). Measured values also correct systematic
-  under-estimates: Bonsai is file+KV not file-size (1.7B 0.4→1.3, 8B 1.4→2.1); Gemma 3
-  adds a ~520MB compute buffer (1B 1.4→1.8); mistral arch is compute-heavy (ministral
-  2.6→3.4); gemma-4-e4b 6.0→7.3; qwen3.5-4b 3.0→4.5. The community peak telemetry can't
-  be used for this — see the data-source note below.
+- **`min_ram_gb` is per-model AND per-platform**, from the team's measured bench
+  (`MEASURED_MIN_RAM`; FOU-99 + min-ram-smoke, 225 cells, MODELRULES-2). Peak memory is a
+  property of the model, not the tier — v1 showed the *same* model with different RAM per
+  tier (gemma-3-4b 4.5 in high / 2.9 in flagship). It IS platform-specific though: measured
+  peak → **iOS = p90 × 1.15** (jetsam), **Android = p90 × 1.25** (lowmemorykiller is more
+  aggressive), so Android sits ~0.2–0.6 GB higher. Measured values also corrected systematic
+  estimate errors in both directions (qwen3-0.6b est 1.8 → 1.2/1.3 measured; smollm3-3b est
+  2.4 → 2.8/3.1; Bonsai file+KV not file-size; Gemma/Mistral compute buffer). The community
+  peak telemetry can't supply this — see the data-source note below. (Still estimated,
+  pending measurement: phi-4-mini-instruct, gemma-3n-e2b/e4b.)
 
 > **Data sources & a known bug.** `obs_tg` (token-gen) comes from community benchmark
 > submissions. The canonical store is **Turso** (~9k rows, current, includes Bonsai), but
