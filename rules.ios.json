@@ -485,7 +485,7 @@
           "quant": "q4_k_m",
           "hf_repo": "LiquidAI/LFM2.5-8B-A1B-GGUF",
           "hf_filename": "LFM2.5-8B-A1B-Q4_K_M.gguf",
-          "min_ram_gb": 5.5
+          "min_ram_gb": 6.2
         },
         {
           "model": "qwen3.5-4b",

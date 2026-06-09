@@ -488,7 +488,7 @@
           "quant": "q4_0",
           "hf_repo": "LiquidAI/LFM2.5-8B-A1B-GGUF",
           "hf_filename": "LFM2.5-8B-A1B-Q4_0.gguf",
-          "min_ram_gb": 5.5
+          "min_ram_gb": 6.3
         },
         {
           "model": "ministral-3-3b",
