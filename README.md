@@ -171,13 +171,15 @@ How models are chosen:
   option and a multimodal option, instead of truncating those (which live at the list tail).
 - **Gemma added** — Gemma 3 1B/4B and **Gemma 4 E2B/E4B** (now data-validated: E4B ~6.5,
   E2B ~9 tg on flagship Android — supersedes the v1 "below the 12-tg floor" exclusion).
-- **LFM2.5-8B-A1B added (high/flagship alternate).** Liquid AI's on-device Mixture-of-Experts
+- **LFM2.5-8B-A1B added (flagship-only alternate).** Liquid AI's on-device Mixture-of-Experts
   (2026-05-28): 8.3B total / ~1.5B active per token (32 experts, top-4), so it decodes at
   ~1.5B cost (~30 tg on phones) while vendor-claiming 3–4B-class quality. All experts stay
-  resident, so memory is 8B-class (~5.5 GB est. at Q4 → min_tier high). Runtime verified:
-  PocketPal's `llama.rn` 0.12.4 bundles the `lfm2moe` arch. lfm1.0 license (same as our
-  shipped dense LFM2). Shipped as an **alternate, not primary** — quality is vendor-claimed
-  (our eval: MODELRULES-6) and min_ram is estimated pending on-device measurement (MODELRULES-2).
+  resident, so memory is 8B-class (~5.5 GB est. at Q4). **Flagship-only, not high** — that
+  estimate is too tight on an 8 GB high-tier device once OS + app overhead is counted.
+  Runtime verified: PocketPal's `llama.rn` 0.12.4 bundles the `lfm2moe` arch. lfm1.0 license
+  (same as our shipped dense LFM2). Shipped as an **alternate, not primary** — quality is
+  vendor-claimed (our eval: MODELRULES-6) and min_ram is estimated pending on-device
+  measurement (MODELRULES-2).
 - **Empirical finding:** Qwen3.5-4B is dropped on Android (real median tg 3.9–4.3 — the
   gated-DeltaNet path is slow on CPU); it stays on iOS/Metal where it measures ~10–13 tg.
 - **iOS uses Q4_K_M** (Metal, no Hexagon) rather than inheriting the Android Q4_0 policy.

@@ -2,9 +2,9 @@
   "$schema": "https://raw.githubusercontent.com/a-ghorbani/pocketpal-device-rules/main/schema/rules.v1.schema.json",
   "schema_version": "1.0.0-draft",
   "platform": "ios",
-  "rules_version": "2026-06-07.2",
-  "generated_at": "2026-06-07T00:00:00Z",
-  "notes": "FOU-99 v2 ios — candidates generated from community benchmark submissions (real device tg + peak memory) by the gen-device-rules.py tool in the advisory repo. 1-bit quants removed; primary = best general model per tier. Classifier/tier_matrix unchanged.",
+  "rules_version": "2026-06-09.1",
+  "generated_at": "2026-06-09T00:00:00Z",
+  "notes": "FOU-99 ios — per-tier candidates curated via the update-device-rules skill (research + judgment), formatted by gen-device-rules.py in the advisory repo. tg + fit validated against community benchmarks; min_ram hand-measured (MODELRULES-2). Native 1.58-bit (Bonsai) shipped as alternates; lossy sub-3-bit excluded. primary = best general model per tier. Classifier/tier_matrix unchanged.",
   "_status": "v1-partial-measured",
   "_quant_policy": "Q4_K_M is primary for Q4 family on Metal (no Q4_0 fastpath like Android Hex). Metal HAS a Q1_0 fastpath that Android lacks — Bonsai variants are real speed+footprint plays on iOS.",
   "_selection_policy": {
@@ -419,13 +419,6 @@
           "multimodal": true
         },
         {
-          "model": "lfm2.5-8b-a1b",
-          "quant": "q4_k_m",
-          "hf_repo": "LiquidAI/LFM2.5-8B-A1B-GGUF",
-          "hf_filename": "LFM2.5-8B-A1B-Q4_K_M.gguf",
-          "min_ram_gb": 5.5
-        },
-        {
           "model": "qwen3.5-4b",
           "quant": "q4_k_m",
           "hf_repo": "unsloth/Qwen3.5-4B-GGUF",
@@ -441,6 +434,15 @@
           "hf_filename": "mistralai_Ministral-3-3B-Instruct-2512-Q4_K_M.gguf",
           "min_ram_gb": 3.4,
           "obs_tg": 36.0
+        },
+        {
+          "model": "bonsai-8b",
+          "quant": "q1_0",
+          "hf_repo": "prism-ml/Bonsai-8B-gguf",
+          "hf_filename": "Bonsai-8B-Q1_0.gguf",
+          "min_ram_gb": 2.1,
+          "obs_tg": 20.0,
+          "native_low_bit": true
         },
         {
           "model": "gemma-3-1b",
