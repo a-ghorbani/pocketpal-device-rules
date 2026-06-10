@@ -1,9 +1,9 @@
 {
   "$schema": "https://raw.githubusercontent.com/a-ghorbani/pocketpal-device-rules/main/schema/rules.v1.schema.json",
-  "schema_version": "1.0.0-draft",
+  "schema_version": "1.1.0-draft",
   "platform": "ios",
-  "rules_version": "2026-06-09.1",
-  "generated_at": "2026-06-09T00:00:00Z",
+  "rules_version": "2026-06-10.1",
+  "generated_at": "2026-06-10T00:00:00Z",
   "notes": "FOU-99 ios — per-tier candidates curated via the update-device-rules skill (research + judgment), formatted by gen-device-rules.py in the advisory repo. tg + fit validated against community benchmarks; min_ram hand-measured (MODELRULES-2). Native 1.58-bit (Bonsai) shipped as alternates; lossy sub-3-bit excluded. primary = best general model per tier. Classifier/tier_matrix unchanged.",
   "_status": "v1-partial-measured",
   "_quant_policy": "Q4_K_M is primary for Q4 family on Metal (no Q4_0 fastpath like Android Hex). Metal HAS a Q1_0 fastpath that Android lacks — Bonsai variants are real speed+footprint plays on iOS.",
@@ -315,6 +315,9 @@
           "quant": "q4_k_m",
           "hf_repo": "ggml-org/gemma-3-1b-it-GGUF",
           "hf_filename": "gemma-3-1b-it-Q4_K_M.gguf",
+          "params": 999885952,
+          "size_bytes": 806058240,
+          "sha256": "8ccc5cd1f1b3602548715ae25a66ed73fd5dc68a210412eea643eb20eb75a135",
           "min_ram_gb": 1.8,
           "obs_tg": 30.0
         },
@@ -323,6 +326,9 @@
           "quant": "q1_0",
           "hf_repo": "prism-ml/Bonsai-1.7B-gguf",
           "hf_filename": "Bonsai-1.7B-Q1_0.gguf",
+          "params": 1720028160,
+          "size_bytes": 248302272,
+          "sha256": "3d7c6c90dd98717a203adb22d5eacd2581850e40aa5327e144b97766cae5f7e3",
           "min_ram_gb": 1.3,
           "obs_tg": 51.2,
           "native_low_bit": true
@@ -332,6 +338,9 @@
           "quant": "q4_k_m",
           "hf_repo": "bartowski/Qwen_Qwen3-0.6B-GGUF",
           "hf_filename": "Qwen_Qwen3-0.6B-Q4_K_M.gguf",
+          "params": 751632384,
+          "size_bytes": 484220320,
+          "sha256": "9acfc1e001311f34b4252001b626f2e466d592a42065f66571bff3790d4e1b14",
           "min_ram_gb": 1.2,
           "obs_tg": 49.3
         },
@@ -340,6 +349,9 @@
           "quant": "q4_k_m",
           "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",
           "hf_filename": "LFM2.5-350M-Q4_K_M.gguf",
+          "params": 354483968,
+          "size_bytes": 229312224,
+          "sha256": "7e6f72643caafc9a68256686638c4d7916f2cec76d1df478d4c3ddcd95a6aed4",
           "min_ram_gb": 1.1,
           "obs_tg": 88.2
         }
@@ -353,6 +365,9 @@
           "quant": "q4_k_m",
           "hf_repo": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF",
           "hf_filename": "HuggingFaceTB_SmolLM3-3B-Q4_K_M.gguf",
+          "params": 3075098624,
+          "size_bytes": 1915305792,
+          "sha256": "519732558d5fa7420ab058e1b776dcfe73da78013c2fe59c7ca43c325ef89132",
           "min_ram_gb": 2.8
         },
         {
@@ -360,6 +375,9 @@
           "quant": "q4_k_m",
           "hf_repo": "LiquidAI/LFM2-2.6B-GGUF",
           "hf_filename": "LFM2-2.6B-Q4_K_M.gguf",
+          "params": 2569272320,
+          "size_bytes": 1563668704,
+          "sha256": "384bc877b6c37064982f96885bef69e4475919f5969218ed4e3b9399ae0340df",
           "min_ram_gb": 2.3,
           "obs_tg": 25.4
         },
@@ -368,6 +386,9 @@
           "quant": "q4_k_m",
           "hf_repo": "bartowski/Qwen_Qwen3-1.7B-GGUF",
           "hf_filename": "Qwen_Qwen3-1.7B-Q4_K_M.gguf",
+          "params": 2031739904,
+          "size_bytes": 1282439584,
+          "sha256": "72c5c3cb38fa32d5256e2fe30d03e7a64c6c79e668ad84057e3bd66e250b24fb",
           "min_ram_gb": 2.0,
           "obs_tg": 23.8
         },
@@ -376,6 +397,9 @@
           "quant": "q4_k_m",
           "hf_repo": "LiquidAI/LFM2.5-1.2B-Instruct-GGUF",
           "hf_filename": "LFM2.5-1.2B-Instruct-Q4_K_M.gguf",
+          "params": 1170340608,
+          "size_bytes": 730895168,
+          "sha256": "b1b3de114215d9507409a662a501a631095a479a419584e8a2ded6304b19b4f5",
           "min_ram_gb": 1.3,
           "obs_tg": 54.9
         },
@@ -384,6 +408,9 @@
           "quant": "q4_k_m",
           "hf_repo": "unsloth/Qwen3.5-2B-GGUF",
           "hf_filename": "Qwen3.5-2B-Q4_K_M.gguf",
+          "params": 1881825088,
+          "size_bytes": 1280835840,
+          "sha256": "aaf42c8b7c3cab2bf3d69c355048d4a0ee9973d48f16c731c0520ee914699223",
           "min_ram_gb": 2.4,
           "obs_tg": 18.8,
           "multimodal": true
@@ -393,6 +420,9 @@
           "quant": "q4_k_m",
           "hf_repo": "ggml-org/gemma-3-1b-it-GGUF",
           "hf_filename": "gemma-3-1b-it-Q4_K_M.gguf",
+          "params": 999885952,
+          "size_bytes": 806058240,
+          "sha256": "8ccc5cd1f1b3602548715ae25a66ed73fd5dc68a210412eea643eb20eb75a135",
           "min_ram_gb": 1.8,
           "obs_tg": 36.2
         }
@@ -406,6 +436,9 @@
           "quant": "q4_k_m",
           "hf_repo": "ggml-org/gemma-3-4b-it-GGUF",
           "hf_filename": "gemma-3-4b-it-Q4_K_M.gguf",
+          "params": 3880099328,
+          "size_bytes": 2489757856,
+          "sha256": "882e8d2db44dc554fb0ea5077cb7e4bc49e7342a1f0da57901c0802ea21a0863",
           "min_ram_gb": 4.1,
           "obs_tg": 11.2
         },
@@ -414,6 +447,9 @@
           "quant": "q4_k_m",
           "hf_repo": "unsloth/gemma-4-E2B-it-GGUF",
           "hf_filename": "gemma-4-E2B-it-Q4_K_M.gguf",
+          "params": 4647450147,
+          "size_bytes": 3106736256,
+          "sha256": "9378bc471710229ef165709b62e34bfb62231420ddaf6d729e727305b5b8672d",
           "min_ram_gb": 4.1,
           "obs_tg": 33.0,
           "multimodal": true
@@ -423,6 +459,9 @@
           "quant": "q4_k_m",
           "hf_repo": "unsloth/Qwen3.5-4B-GGUF",
           "hf_filename": "Qwen3.5-4B-Q4_K_M.gguf",
+          "params": 4205751296,
+          "size_bytes": 2740937888,
+          "sha256": "00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4",
           "min_ram_gb": 4.5,
           "obs_tg": 10.5,
           "multimodal": true
@@ -432,6 +471,9 @@
           "quant": "q4_k_m",
           "hf_repo": "bartowski/mistralai_Ministral-3-3B-Instruct-2512-GGUF",
           "hf_filename": "mistralai_Ministral-3-3B-Instruct-2512-Q4_K_M.gguf",
+          "params": 3429006336,
+          "size_bytes": 2146498528,
+          "sha256": "fec9d28c7f8dab7c6857d54b56c8264cce57d6f6d9003bd4110f6457f071c65a",
           "min_ram_gb": 3.4,
           "obs_tg": 36.0
         },
@@ -440,6 +482,9 @@
           "quant": "q1_0",
           "hf_repo": "prism-ml/Bonsai-8B-gguf",
           "hf_filename": "Bonsai-8B-Q1_0.gguf",
+          "params": 8188548096,
+          "size_bytes": 1158654496,
+          "sha256": "284a335aa3fb2ced3b1b01fcb40b08aa783e3b70832767f0dd2e3fdfa134bd54",
           "min_ram_gb": 2.1,
           "obs_tg": 20.0,
           "native_low_bit": true
@@ -449,6 +494,9 @@
           "quant": "q4_k_m",
           "hf_repo": "ggml-org/gemma-3-1b-it-GGUF",
           "hf_filename": "gemma-3-1b-it-Q4_K_M.gguf",
+          "params": 999885952,
+          "size_bytes": 806058240,
+          "sha256": "8ccc5cd1f1b3602548715ae25a66ed73fd5dc68a210412eea643eb20eb75a135",
           "min_ram_gb": 1.8,
           "obs_tg": 45.7
         }
@@ -462,6 +510,9 @@
           "quant": "q4_k_m",
           "hf_repo": "ggml-org/gemma-3-4b-it-GGUF",
           "hf_filename": "gemma-3-4b-it-Q4_K_M.gguf",
+          "params": 3880099328,
+          "size_bytes": 2489757856,
+          "sha256": "882e8d2db44dc554fb0ea5077cb7e4bc49e7342a1f0da57901c0802ea21a0863",
           "min_ram_gb": 4.1
         },
         {
@@ -469,6 +520,9 @@
           "quant": "q4_k_m",
           "hf_repo": "ggml-org/gemma-4-E4B-it-GGUF",
           "hf_filename": "gemma-4-E4B-it-Q4_K_M.gguf",
+          "params": 7518069290,
+          "size_bytes": 5335289824,
+          "sha256": "90ce98129eb3e8cc57e62433d500c97c624b1e3af1fcc85dd3b55ad7e0313e9f",
           "min_ram_gb": 7.3,
           "multimodal": true
         },
@@ -477,6 +531,9 @@
           "quant": "q4_k_m",
           "hf_repo": "unsloth/gemma-4-E2B-it-GGUF",
           "hf_filename": "gemma-4-E2B-it-Q4_K_M.gguf",
+          "params": 4647450147,
+          "size_bytes": 3106736256,
+          "sha256": "9378bc471710229ef165709b62e34bfb62231420ddaf6d729e727305b5b8672d",
           "min_ram_gb": 4.1,
           "multimodal": true
         },
@@ -485,6 +542,9 @@
           "quant": "q4_k_m",
           "hf_repo": "LiquidAI/LFM2.5-8B-A1B-GGUF",
           "hf_filename": "LFM2.5-8B-A1B-Q4_K_M.gguf",
+          "params": 8467856832,
+          "size_bytes": 5155564768,
+          "sha256": "4923ec14f06b968b74d663e5949867d2d9c3bf13a20b8be1a9f9af39989b2bb0",
           "min_ram_gb": 6.2
         },
         {
@@ -492,6 +552,9 @@
           "quant": "q4_k_m",
           "hf_repo": "unsloth/Qwen3.5-4B-GGUF",
           "hf_filename": "Qwen3.5-4B-Q4_K_M.gguf",
+          "params": 4205751296,
+          "size_bytes": 2740937888,
+          "sha256": "00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4",
           "min_ram_gb": 4.5,
           "multimodal": true
         },
@@ -500,6 +563,9 @@
           "quant": "q4_k_m",
           "hf_repo": "ggml-org/gemma-3-1b-it-GGUF",
           "hf_filename": "gemma-3-1b-it-Q4_K_M.gguf",
+          "params": 999885952,
+          "size_bytes": 806058240,
+          "sha256": "8ccc5cd1f1b3602548715ae25a66ed73fd5dc68a210412eea643eb20eb75a135",
           "min_ram_gb": 1.8,
           "obs_tg": 85.6
         }
