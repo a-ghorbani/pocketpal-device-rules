@@ -200,12 +200,15 @@ How models are chosen:
   alternate added clutter and no value, so it was dropped rather than kept. (Our multimodal
   picks — gemma-4 E2B/E4B, Qwen3-VL-4B, Qwen3.5 — all have verified GGUF projectors.)
 
-> **Data sources & a known bug.** `obs_tg` (token-gen) comes from community benchmark
-> submissions. The canonical store is **Turso** (~9k rows, current, includes Bonsai), but
-> its `peak_memory_usage` column is **corrupted** — stored as the literal string
-> `"[object Object]"` for ~all rows (a `JSON.stringify` bug in the submission write path),
-> so memory CANNOT be derived from it. That's why `min_ram_gb` uses hand-measured values.
-> Bonsai's `obs_tg` is seeded from Turso's clean `tg_avg` (absent from the older Firestore
+> **Data sources.** `obs_tg` (token-gen) comes from community benchmark submissions. The
+> canonical store is **Turso** (~9k rows, current, includes Bonsai). Its `peak_memory_usage`
+> column was **corrupted** (stored as the literal `"[object Object]"` from a `JSON.stringify`
+> bug) — **fixed + backfilled 2026-06-10**, so it now carries numeric byte values. But the
+> raw community peak is noisy (failed-load and pressure-inflated outliers, free-text model
+> names) and miscalibrated against the hand-measured bench (overshoots Android, undershoots
+> iOS), so `min_ram_gb` **still uses hand-measured values**; community peak is a cross-check
+> / coverage-extender pending re-calibration. Bonsai's `obs_tg` is seeded from Turso's clean
+> `tg_avg` (absent from the older Firestore
 > CSV), **platform-specific** — the 1-bit kernel is slow on Android CPU but fast on
 > iOS/Metal (Bonsai-8B ≈ 3.6 tg Android vs ≈ 20 tg on an iPhone 13 Pro), so a single
 > number would be wrong on one platform. Fixing the ingestion bug + pointing the
@@ -214,9 +217,11 @@ How models are chosen:
 
 ## v2 follow-ups
 
-- **Fix the `peak_memory_usage` ingestion bug** (Turso stores `"[object Object]"` instead
-  of the JSON) so community peak telemetry becomes usable and `min_ram_gb` can be
-  data-derived again instead of hand-measured.
+- **Calibrate + integrate community peak telemetry.** The `peak_memory_usage` ingestion bug
+  is fixed + backfilled (2026-06-10), but the raw data is noisy and miscalibrated vs the
+  hand-measured bench (overshoots Android ~+0.5–1.9 GB, undershoots iOS ~0.5–1.3 GB). Before
+  `min_ram_gb` can be data-derived again, re-fit the per-platform multiplier against the
+  measured set and add garbage-filtering + canonical name/quant matching.
 - **Wire the generator to Turso** (the canonical, current store with Bonsai) — needs a
   device→SoC mapping since Turso lacks the CPU-feature columns the Android classifier uses,
   and gives every model real per-tier `obs_tg` (incl. Bonsai) instead of seeded fallbacks.
