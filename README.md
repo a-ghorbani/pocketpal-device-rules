@@ -127,42 +127,33 @@ Known limitations:
 
 ## Updating the candidate lists
 
-This repo holds **only the generated data artifacts** — no scripts. The per-tier
-candidate lists are **generated from real community benchmark submissions**, not
-hand-curated. PocketPal collects thousands of on-device benchmark runs (device
-SoC/RAM + measured prefill/token-gen + peak memory); the generator turns that data
-into the `tiers.*.candidates` blocks. **"Update the list" = re-run the generator.**
+This repo holds **only the data** — no scripts. `rules.android.json` / `rules.ios.json`
+**are the source of truth.** Every update is a researched, judged edit to these files,
+validated against real community benchmark submissions (PocketPal collects thousands of
+on-device runs: device SoC/RAM + measured prefill/token-gen + peak memory). How an update
+is prepared is the maintainer's concern and deliberately out of scope here — consumers
+should treat these files as curated data and nothing else.
 
-The generator lives in the advisory tooling (next to the data fetcher), not here:
+What an update touches:
 
-```bash
-# in the founder-advisory-board repo:
-python3 tools/fetch-benchmarks.py --refresh                              # refresh community data
-python3 tools/gen-device-rules.py --rules-dir ~/codes/pocketpal-device-rules            # writes the JSON
-python3 tools/gen-device-rules.py --rules-dir ~/codes/pocketpal-device-rules --dry-run  # preview only
-```
-
-What it does and does not touch:
-
-- **Regenerates** only `tiers.*.candidates` (model, quant, hf_repo/filename, `min_ram_gb`
-  from real p90 peak memory, `obs_tg` from real median token-gen).
-- **Never touches** the classifier (`soc_model_to_class`, `cpu_heuristic`, `chip_to_class`,
-  `ram_bands`, `tier_matrix`) — that stays the curated v1 logic.
+- **Routine updates** change only `tiers.*.candidates` (model, quant, hf_repo/filename,
+  `min_ram_gb` from real p90 peak memory, `obs_tg` from real median token-gen).
+- The classifier (`soc_model_to_class`, `cpu_heuristic`, `chip_to_class`, `ram_bands`,
+  `tier_matrix`) stays the curated v1 logic and only changes deliberately.
 
 How models are chosen:
 
-- `MODEL_REGISTRY` (top of the generator) is the single curated knob: the modern,
-  llama.cpp-safe shortlist + each model's `min_tier` and ordering `rank`. Add a model →
-  re-run → community data validates it.
+- A curated shortlist of modern, llama.cpp-safe models — each with a minimum tier and a
+  display ordering — decides what is eligible per tier.
 - Community data is the **guardrail**: a model is dropped from a tier if its real median
-  token-gen on that tier's devices is below `MIN_TG`, or its p90 peak memory doesn't fit
-  the tier's RAM band (with OS-killer headroom). Sub-3-bit *post-training* quants are never
-  eligible — but models **trained natively** at low bit-width (BitNet b1.58 / ternary, e.g.
-  PrismML Bonsai) opt in via `native_low_bit` and ship their native quant, since there 1.58-bit
-  is the format the model was trained in, not lossy compression.
+  token-gen on that tier's devices is below the tier floor, or its p90 peak memory doesn't
+  fit the tier's RAM band (with OS-killer headroom). Sub-3-bit *post-training* quants are
+  never eligible — but models **trained natively** at low bit-width (BitNet b1.58 / ternary,
+  e.g. PrismML Bonsai) ship their native quant (marked `native_low_bit`), since there
+  1.58-bit is the format the model was trained in, not lossy compression.
 - New models with no submissions yet (e.g. a just-released model) ship as labelled
-  alternates with a size-estimated `min_ram` and **auto-promote** to real `obs_tg` /
-  measured `min_ram` on the next run once submissions land.
+  alternates with a size-estimated `min_ram`, replaced by real `obs_tg` / measured
+  `min_ram` in a later revision once submissions land.
 
 ### v2 changes vs the hand-curated v1
 
@@ -183,7 +174,7 @@ How models are chosen:
   **Qwen3.5-2B** (multimodal), and the recent **LFM2.5-1.2B** / **LFM2-2.6B** (Liquid AI,
   on-device-first hybrid arch) so mid is a real, current selection — not just one 3B + one 1B.
   (Qwen3.5-2B is dropped from Android mid on memory — p90 peak 5.0GB > cap — but kept on iOS.)
-- **Max ~6 candidates per tier** (`MAX_PER_TIER`). A cap, not a target: short tiers stay
+- **Max ~6 candidates per tier.** A cap, not a target: short tiers stay
   short (never padded with models that don't fit). The trim is diversity-preserving — it
   always keeps the top-ranked models (incl. the primary) plus a guaranteed fast/light
   option and a multimodal option, instead of truncating those (which live at the list tail).
@@ -201,7 +192,7 @@ How models are chosen:
   gated-DeltaNet path is slow on CPU); it stays on iOS/Metal where it measures ~10–13 tg.
 - **iOS uses Q4_K_M** (Metal, no Hexagon) rather than inheriting the Android Q4_0 policy.
 - **`min_ram_gb` is per-model AND per-platform**, from the team's measured bench
-  (`MEASURED_MIN_RAM`; FOU-99 + min-ram-smoke, 225 cells, MODELRULES-2). Peak memory is a
+  (FOU-99 + min-ram-smoke, 225 cells, MODELRULES-2). Peak memory is a
   property of the model, not the tier — v1 showed the *same* model with different RAM per
   tier (gemma-3-4b 4.5 in high / 2.9 in flagship). It IS platform-specific though: measured
   peak → **iOS = p90 × 1.15** (jetsam), **Android = p90 × 1.25** (lowmemorykiller is more
@@ -229,9 +220,9 @@ How models are chosen:
 > `tg_avg` (absent from the older Firestore
 > CSV), **platform-specific** — the 1-bit kernel is slow on Android CPU but fast on
 > iOS/Metal (Bonsai-8B ≈ 3.6 tg Android vs ≈ 20 tg on an iPhone 13 Pro), so a single
-> number would be wrong on one platform. Fixing the ingestion bug + pointing the
-> generator at Turso (it lacks the SoC/CPU columns the Android classifier needs) are the
-> two open data-plumbing follow-ups.
+> number would be wrong on one platform. Re-calibrating the community peak and sourcing
+> `obs_tg` refreshes directly from Turso (it lacks the SoC/CPU columns the Android
+> classifier needs) are the two open data-plumbing follow-ups.
 
 ## v2 follow-ups
 
@@ -240,9 +231,9 @@ How models are chosen:
   hand-measured bench (overshoots Android ~+0.5–1.9 GB, undershoots iOS ~0.5–1.3 GB). Before
   `min_ram_gb` can be data-derived again, re-fit the per-platform multiplier against the
   measured set and add garbage-filtering + canonical name/quant matching.
-- **Wire the generator to Turso** (the canonical, current store with Bonsai) — needs a
-  device→SoC mapping since Turso lacks the CPU-feature columns the Android classifier uses,
-  and gives every model real per-tier `obs_tg` (incl. Bonsai) instead of seeded fallbacks.
+- **Source `obs_tg` directly from Turso** (the canonical, current store with Bonsai) — needs
+  a device→SoC mapping since Turso lacks the CPU-feature columns the Android classifier uses;
+  gives every model real per-tier `obs_tg` (incl. Bonsai) instead of seeded fallbacks.
 - Add a **quality floor** to gating (reuse the GEval/Grok judge harness): a model can't be
   a default unless it clears a small fixed-prompt quality bar at its shipped quant. This is
   what makes dropping 1-bit principled rather than a judgement call.

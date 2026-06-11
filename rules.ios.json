@@ -3,8 +3,8 @@
   "schema_version": "1.1.0-draft",
   "platform": "ios",
   "rules_version": "2026-06-10.1",
-  "generated_at": "2026-06-10T00:00:00Z",
-  "notes": "FOU-99 ios — per-tier candidates curated via the update-device-rules skill (research + judgment), formatted by gen-device-rules.py in the advisory repo. tg + fit validated against community benchmarks; min_ram hand-measured (MODELRULES-2). Native 1.58-bit (Bonsai) shipped as alternates; lossy sub-3-bit excluded. primary = best general model per tier. Classifier/tier_matrix unchanged.",
+  "updated_at": "2026-06-10T00:00:00Z",
+  "notes": "FOU-99 ios — per-tier candidates hand-curated (research + judgment). tg + fit validated against community benchmarks; min_ram hand-measured (MODELRULES-2). Native 1.58-bit (Bonsai) shipped as alternates; lossy sub-3-bit excluded. primary = best general model per tier. Classifier/tier_matrix unchanged.",
   "_status": "v1-partial-measured",
   "_quant_policy": "Q4_K_M is primary for Q4 family on Metal (no Q4_0 fastpath like Android Hex). Metal HAS a Q1_0 fastpath that Android lacks — Bonsai variants are real speed+footprint plays on iOS.",
   "_selection_policy": {
@@ -308,7 +308,7 @@
   },
   "tiers": {
     "low": {
-      "description": "4 candidate(s); primary: gemma-3-1b. Generated from community benchmarks.",
+      "description": "4 candidate(s); primary: gemma-3-1b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "gemma-3-1b",
@@ -358,7 +358,7 @@
       ]
     },
     "mid": {
-      "description": "6 candidate(s); primary: smollm3-3b. Generated from community benchmarks.",
+      "description": "6 candidate(s); primary: smollm3-3b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "smollm3-3b",
@@ -429,7 +429,7 @@
       ]
     },
     "high": {
-      "description": "6 candidate(s); primary: gemma-3-4b. Generated from community benchmarks.",
+      "description": "6 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "gemma-3-4b",
@@ -503,7 +503,7 @@
       ]
     },
     "flagship": {
-      "description": "6 candidate(s); primary: gemma-3-4b. Generated from community benchmarks.",
+      "description": "6 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "gemma-3-4b",
