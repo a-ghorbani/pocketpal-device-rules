@@ -29,6 +29,7 @@ Each candidate entry is selection + display hints only — the app derives all m
 | Field | Meaning |
 |---|---|
 | `model`, `quant` | model id + quant tag; together they identify the candidate within a tier |
+| `display_name` | human-readable model name for the UI (e.g. `Gemma 4 E2B`, `Phi-4 Mini`); `model` stays the stable identity key |
 | `hf_repo`, `hf_filename` | where to download the GGUF |
 | `params` | parameter count (HF repo GGUF metadata) — display badge + rough estimates |
 | `size_bytes` | exact GGUF file size (HF API) — download-size UI + pre-download fit check |
@@ -36,7 +37,8 @@ Each candidate entry is selection + display hints only — the app derives all m
 | `min_ram_gb` | p90 peak load memory + OS-killer headroom |
 | `obs_tg` | median community token-gen tok/s on the tier's devices (absent = no submissions yet) |
 | `native_low_bit` | model trained natively at low bit-width (BitNet b1.58); its sub-3-bit quant is the native format, not lossy compression |
-| `multimodal` | GGUF has a vision tower (mmproj) |
+| `multimodal` | GGUF has a companion projector (mmproj) |
+| `mmproj` | explicit projector reference for multimodal entries: `hf_repo` / `hf_filename` / `size_bytes` (same meanings as the main entry — the repo may differ from the model's) plus `modalities` (`["vision"]`, `["audio"]`, or both) — a pre-download labelling hint; the engine reports actual support at load |
 
 The rules file is render-complete offline: the bundled snapshot and the CDN copy carry identical, self-sufficient data — no HF API round-trip needed to show model cards.
 
