@@ -312,6 +312,7 @@
       "candidates": [
         {
           "model": "gemma-3-1b",
+          "display_name": "Gemma 3 1B",
           "quant": "q4_k_m",
           "hf_repo": "ggml-org/gemma-3-1b-it-GGUF",
           "hf_filename": "gemma-3-1b-it-Q4_K_M.gguf",
@@ -323,6 +324,7 @@
         },
         {
           "model": "bonsai-1.7b",
+          "display_name": "Bonsai 1.7B",
           "quant": "q1_0",
           "hf_repo": "prism-ml/Bonsai-1.7B-gguf",
           "hf_filename": "Bonsai-1.7B-Q1_0.gguf",
@@ -335,6 +337,7 @@
         },
         {
           "model": "qwen3-0.6b",
+          "display_name": "Qwen3 0.6B",
           "quant": "q4_k_m",
           "hf_repo": "bartowski/Qwen_Qwen3-0.6B-GGUF",
           "hf_filename": "Qwen_Qwen3-0.6B-Q4_K_M.gguf",
@@ -346,6 +349,7 @@
         },
         {
           "model": "lfm2.5-350m",
+          "display_name": "LFM2.5 350M",
           "quant": "q4_k_m",
           "hf_repo": "LiquidAI/LFM2.5-350M-GGUF",
           "hf_filename": "LFM2.5-350M-Q4_K_M.gguf",
@@ -362,6 +366,7 @@
       "candidates": [
         {
           "model": "smollm3-3b",
+          "display_name": "SmolLM3 3B",
           "quant": "q4_0",
           "hf_repo": "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF",
           "hf_filename": "HuggingFaceTB_SmolLM3-3B-Q4_0.gguf",
@@ -373,6 +378,7 @@
         },
         {
           "model": "lfm2-2.6b",
+          "display_name": "LFM2 2.6B",
           "quant": "q4_k_m",
           "hf_repo": "LiquidAI/LFM2-2.6B-GGUF",
           "hf_filename": "LFM2-2.6B-Q4_K_M.gguf",
@@ -384,6 +390,7 @@
         },
         {
           "model": "qwen3-1.7b",
+          "display_name": "Qwen3 1.7B",
           "quant": "q4_k_m",
           "hf_repo": "bartowski/Qwen_Qwen3-1.7B-GGUF",
           "hf_filename": "Qwen_Qwen3-1.7B-Q4_K_M.gguf",
@@ -395,6 +402,7 @@
         },
         {
           "model": "lfm2.5-1.2b",
+          "display_name": "LFM2.5 1.2B",
           "quant": "q4_k_m",
           "hf_repo": "LiquidAI/LFM2.5-1.2B-Instruct-GGUF",
           "hf_filename": "LFM2.5-1.2B-Instruct-Q4_K_M.gguf",
@@ -406,6 +414,7 @@
         },
         {
           "model": "lfm2-vl-1.6b",
+          "display_name": "LFM2-VL 1.6B",
           "quant": "q4_0",
           "hf_repo": "LiquidAI/LFM2-VL-1.6B-GGUF",
           "hf_filename": "LFM2-VL-1.6B-Q4_0.gguf",
@@ -424,6 +433,7 @@
         },
         {
           "model": "bonsai-8b",
+          "display_name": "Bonsai 8B",
           "quant": "q1_0",
           "hf_repo": "prism-ml/Bonsai-8B-gguf",
           "hf_filename": "Bonsai-8B-Q1_0.gguf",
@@ -436,6 +446,7 @@
         },
         {
           "model": "gemma-3-1b",
+          "display_name": "Gemma 3 1B",
           "quant": "q4_k_m",
           "hf_repo": "ggml-org/gemma-3-1b-it-GGUF",
           "hf_filename": "gemma-3-1b-it-Q4_K_M.gguf",
@@ -452,6 +463,7 @@
       "candidates": [
         {
           "model": "gemma-3-4b",
+          "display_name": "Gemma 3 4B",
           "quant": "q4_0",
           "hf_repo": "unsloth/gemma-3-4b-it-GGUF",
           "hf_filename": "gemma-3-4b-it-Q4_0.gguf",
@@ -463,6 +475,7 @@
         },
         {
           "model": "gemma-4-e2b",
+          "display_name": "Gemma 4 E2B",
           "quant": "q4_0",
           "hf_repo": "unsloth/gemma-4-E2B-it-GGUF",
           "hf_filename": "gemma-4-E2B-it-Q4_0.gguf",
@@ -481,6 +494,7 @@
         },
         {
           "model": "bonsai-8b",
+          "display_name": "Bonsai 8B",
           "quant": "q1_0",
           "hf_repo": "prism-ml/Bonsai-8B-gguf",
           "hf_filename": "Bonsai-8B-Q1_0.gguf",
@@ -493,6 +507,7 @@
         },
         {
           "model": "phi-4-mini-instruct",
+          "display_name": "Phi-4 Mini",
           "quant": "q4_0",
           "hf_repo": "bartowski/microsoft_Phi-4-mini-instruct-GGUF",
           "hf_filename": "microsoft_Phi-4-mini-instruct-Q4_0.gguf",
@@ -504,6 +519,7 @@
         },
         {
           "model": "bonsai-4b",
+          "display_name": "Bonsai 4B",
           "quant": "q1_0",
           "hf_repo": "prism-ml/Bonsai-4B-gguf",
           "hf_filename": "Bonsai-4B-Q1_0.gguf",
@@ -515,6 +531,7 @@
         },
         {
           "model": "gemma-3-1b",
+          "display_name": "Gemma 3 1B",
           "quant": "q4_k_m",
           "hf_repo": "ggml-org/gemma-3-1b-it-GGUF",
           "hf_filename": "gemma-3-1b-it-Q4_K_M.gguf",
@@ -531,6 +548,7 @@
       "candidates": [
         {
           "model": "gemma-3-4b",
+          "display_name": "Gemma 3 4B",
           "quant": "q4_0",
           "hf_repo": "unsloth/gemma-3-4b-it-GGUF",
           "hf_filename": "gemma-3-4b-it-Q4_0.gguf",
@@ -542,6 +560,7 @@
         },
         {
           "model": "gemma-4-e4b",
+          "display_name": "Gemma 4 E4B",
           "quant": "q4_0",
           "hf_repo": "unsloth/gemma-4-E4B-it-GGUF",
           "hf_filename": "gemma-4-E4B-it-Q4_0.gguf",
@@ -560,6 +579,7 @@
         },
         {
           "model": "gemma-4-e2b",
+          "display_name": "Gemma 4 E2B",
           "quant": "q4_0",
           "hf_repo": "unsloth/gemma-4-E2B-it-GGUF",
           "hf_filename": "gemma-4-E2B-it-Q4_0.gguf",
@@ -578,6 +598,7 @@
         },
         {
           "model": "lfm2.5-8b-a1b",
+          "display_name": "LFM2.5 8B-A1B",
           "quant": "q4_0",
           "hf_repo": "LiquidAI/LFM2.5-8B-A1B-GGUF",
           "hf_filename": "LFM2.5-8B-A1B-Q4_0.gguf",
@@ -588,6 +609,7 @@
         },
         {
           "model": "ministral-3-3b",
+          "display_name": "Ministral 3 3B",
           "quant": "q4_0",
           "hf_repo": "bartowski/mistralai_Ministral-3-3B-Instruct-2512-GGUF",
           "hf_filename": "mistralai_Ministral-3-3B-Instruct-2512-Q4_0.gguf",
@@ -599,6 +621,7 @@
         },
         {
           "model": "gemma-3-1b",
+          "display_name": "Gemma 3 1B",
           "quant": "q4_k_m",
           "hf_repo": "ggml-org/gemma-3-1b-it-GGUF",
           "hf_filename": "gemma-3-1b-it-Q4_K_M.gguf",
