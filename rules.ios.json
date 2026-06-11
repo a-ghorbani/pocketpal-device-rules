@@ -1,10 +1,10 @@
 {
   "$schema": "https://raw.githubusercontent.com/a-ghorbani/pocketpal-device-rules/main/schema/rules.v1.schema.json",
-  "schema_version": "1.1.0-draft",
+  "schema_version": "1.2.0-draft",
   "platform": "ios",
-  "rules_version": "2026-06-10.1",
-  "updated_at": "2026-06-10T00:00:00Z",
-  "notes": "FOU-99 ios — per-tier candidates hand-curated (research + judgment). tg + fit validated against community benchmarks; min_ram hand-measured (MODELRULES-2). Native 1.58-bit (Bonsai) shipped as alternates; lossy sub-3-bit excluded. primary = best general model per tier. Classifier/tier_matrix unchanged.",
+  "rules_version": "2026-06-11.1",
+  "updated_at": "2026-06-11T00:00:00Z",
+  "notes": "FOU-99 ios — per-tier candidates hand-curated (research + judgment). tg + fit validated against community benchmarks; min_ram hand-measured (MODELRULES-2). Native 1.58-bit (Bonsai) shipped as alternates; lossy sub-3-bit excluded. primary = best general model per tier. Classifier/tier_matrix unchanged. 2026-06-11: multimodal entries carry an explicit mmproj projector reference (MODELRULES-9).",
   "_status": "v1-partial-measured",
   "_quant_policy": "Q4_K_M is primary for Q4 family on Metal (no Q4_0 fastpath like Android Hex). Metal HAS a Q1_0 fastpath that Android lacks — Bonsai variants are real speed+footprint plays on iOS.",
   "_selection_policy": {
@@ -413,7 +413,13 @@
           "sha256": "aaf42c8b7c3cab2bf3d69c355048d4a0ee9973d48f16c731c0520ee914699223",
           "min_ram_gb": 2.4,
           "obs_tg": 18.8,
-          "multimodal": true
+          "multimodal": true,
+          "mmproj": {
+            "hf_repo": "unsloth/Qwen3.5-2B-GGUF",
+            "hf_filename": "mmproj-F16.gguf",
+            "size_bytes": 668227264,
+            "modalities": ["vision"]
+          }
         },
         {
           "model": "gemma-3-1b",
@@ -452,7 +458,13 @@
           "sha256": "9378bc471710229ef165709b62e34bfb62231420ddaf6d729e727305b5b8672d",
           "min_ram_gb": 4.1,
           "obs_tg": 33.0,
-          "multimodal": true
+          "multimodal": true,
+          "mmproj": {
+            "hf_repo": "unsloth/gemma-4-E2B-it-GGUF",
+            "hf_filename": "mmproj-F16.gguf",
+            "size_bytes": 985654080,
+            "modalities": ["vision"]
+          }
         },
         {
           "model": "qwen3.5-4b",
@@ -464,7 +476,13 @@
           "sha256": "00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4",
           "min_ram_gb": 4.5,
           "obs_tg": 10.5,
-          "multimodal": true
+          "multimodal": true,
+          "mmproj": {
+            "hf_repo": "unsloth/Qwen3.5-4B-GGUF",
+            "hf_filename": "mmproj-F16.gguf",
+            "size_bytes": 672423616,
+            "modalities": ["vision"]
+          }
         },
         {
           "model": "ministral-3-3b",
@@ -524,7 +542,13 @@
           "size_bytes": 5335289824,
           "sha256": "90ce98129eb3e8cc57e62433d500c97c624b1e3af1fcc85dd3b55ad7e0313e9f",
           "min_ram_gb": 7.3,
-          "multimodal": true
+          "multimodal": true,
+          "mmproj": {
+            "hf_repo": "ggml-org/gemma-4-E4B-it-GGUF",
+            "hf_filename": "mmproj-gemma-4-E4B-it-Q8_0.gguf",
+            "size_bytes": 559874528,
+            "modalities": ["vision"]
+          }
         },
         {
           "model": "gemma-4-e2b",
@@ -535,7 +559,13 @@
           "size_bytes": 3106736256,
           "sha256": "9378bc471710229ef165709b62e34bfb62231420ddaf6d729e727305b5b8672d",
           "min_ram_gb": 4.1,
-          "multimodal": true
+          "multimodal": true,
+          "mmproj": {
+            "hf_repo": "unsloth/gemma-4-E2B-it-GGUF",
+            "hf_filename": "mmproj-F16.gguf",
+            "size_bytes": 985654080,
+            "modalities": ["vision"]
+          }
         },
         {
           "model": "lfm2.5-8b-a1b",
@@ -556,7 +586,13 @@
           "size_bytes": 2740937888,
           "sha256": "00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4",
           "min_ram_gb": 4.5,
-          "multimodal": true
+          "multimodal": true,
+          "mmproj": {
+            "hf_repo": "unsloth/Qwen3.5-4B-GGUF",
+            "hf_filename": "mmproj-F16.gguf",
+            "size_bytes": 672423616,
+            "modalities": ["vision"]
+          }
         },
         {
           "model": "gemma-3-1b",

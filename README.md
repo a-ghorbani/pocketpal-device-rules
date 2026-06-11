@@ -36,7 +36,8 @@ Each candidate entry is selection + display hints only — the app derives all m
 | `min_ram_gb` | p90 peak load memory + OS-killer headroom |
 | `obs_tg` | median community token-gen tok/s on the tier's devices (absent = no submissions yet) |
 | `native_low_bit` | model trained natively at low bit-width (BitNet b1.58); its sub-3-bit quant is the native format, not lossy compression |
-| `multimodal` | GGUF has a vision tower (mmproj) |
+| `multimodal` | GGUF has a companion projector (mmproj) |
+| `mmproj` | explicit projector reference for multimodal entries: `hf_repo` / `hf_filename` / `size_bytes` (same meanings as the main entry — the repo may differ from the model's) plus `modalities` (`["vision"]`, `["audio"]`, or both) — a pre-download labelling hint; the engine reports actual support at load |
 
 The rules file is render-complete offline: the bundled snapshot and the CDN copy carry identical, self-sufficient data — no HF API round-trip needed to show model cards.
 
