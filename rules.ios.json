@@ -4,7 +4,6 @@
   "platform": "ios",
   "rules_version": "2026-06-11.1",
   "updated_at": "2026-06-11T00:00:00Z",
-  "notes": "FOU-99 ios — per-tier candidates hand-curated (research + judgment). tg + fit validated against community benchmarks; min_ram hand-measured (MODELRULES-2). Native 1.58-bit (Bonsai) shipped as alternates; lossy sub-3-bit excluded. primary = best general model per tier. Classifier/tier_matrix unchanged. 2026-06-11: multimodal entries carry an explicit mmproj projector reference (MODELRULES-9).",
   "_status": "v1-partial-measured",
   "_quant_policy": "Q4_K_M is primary for Q4 family on Metal (no Q4_0 fastpath like Android Hex). Metal HAS a Q1_0 fastpath that Android lacks — Bonsai variants are real speed+footprint plays on iOS.",
   "_selection_policy": {
