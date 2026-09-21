@@ -8,14 +8,36 @@ The rules let the app pick sensible default models for the user's phone without 
 
 | File | URL | Platform |
 |---|---|---|
-| `rules.android.json` | https://cdn.jsdelivr.net/gh/a-ghorbani/pocketpal-device-rules@main/rules.android.json | Android |
-| `rules.ios.json` | https://cdn.jsdelivr.net/gh/a-ghorbani/pocketpal-device-rules@main/rules.ios.json | iOS / iPadOS |
+| `rules.android.v2.json` | https://cdn.jsdelivr.net/gh/a-ghorbani/pocketpal-device-rules@main/rules.android.v2.json | Android — schema v2 |
+| `rules.ios.v2.json` | https://cdn.jsdelivr.net/gh/a-ghorbani/pocketpal-device-rules@main/rules.ios.v2.json | iOS / iPadOS — schema v2 |
+| `rules.android.json` | https://cdn.jsdelivr.net/gh/a-ghorbani/pocketpal-device-rules@main/rules.android.json | Android — schema v1, **frozen** |
+| `rules.ios.json` | https://cdn.jsdelivr.net/gh/a-ghorbani/pocketpal-device-rules@main/rules.ios.json | iOS / iPadOS — schema v1, **frozen** |
+| `schema/rules.v2.schema.json` | | JSON Schema for the v2 files |
 
 The app reads the file matching the current OS. Each file is independent (own classifier, own tier matrix, own candidate list) because the device-classification signals and the accelerated-backend characteristics differ enough that a shared schema would force unnatural compromises.
 
+## Schema channels and version gating
+
+The app has no way to reject a model it cannot load unless the rules tell it which app version is needed, and shipped clients ignore fields they don't know. So gating is done **by URL**:
+
+- **v1 channel — `rules.<platform>.json`, frozen.** Read by PocketPal v1.16.0 – v1.17.x. Keeps `schema_version` `1.2.0-draft`. Only classifier fixes and changes to models that load on **every** v1 client (llama.rn ≥ 0.12.4) may land here. **Never add a model on a newer GGUF architecture to v1.**
+- **v2 channel — `rules.<platform>.v2.json`.** Read by app releases that understand v2. `schema_version` major must be `2`; any other major makes the app fall back to its bundled rules.
+
+v2 adds one optional field, `min_app_version` (strict `X.Y.Z`), on a candidate and on its `mmproj` / `draft` blocks:
+
+| Where | App version below it, or value malformed |
+|---|---|
+| candidate | candidate dropped |
+| `mmproj` | **whole candidate** dropped (a vision model never ships without its projector) |
+| `draft` | only the draft dropped; the target stays |
+
+Set it to the first PocketPal release whose llama.rn supports the model's GGUF `general.architecture`. Known cut-offs: `lfm2` / `lfm2moe` / LFM2 vision projector: all v2 clients (no field needed); `nanbeige`: 1.17.0; `spark2_5`: 1.17.3. Candidates are ordered and gated per entry, so a gated entry may be followed by an ungated fallback.
+
+Rollout rule: a v2 file must be live on `@main` (and jsDelivr purged) **before** an app build that fetches it ships. Until then the app falls back to its bundled rules on the 404, which is safe but stale.
+
 ## How the app uses it
 
-1. On startup (or first model picker open), fetch `rules.<platform>.json` and cache it.
+1. On startup, show the list from the bundled rules snapshot, then fetch `rules.<platform>.v2.json` (v1 clients: `rules.<platform>.json`) in the background. On success the fetched list replaces non-downloaded presets.
 2. Read the device signals the platform exposes:
    - **Android**: `Build.SOC_MODEL` (API 31+), `Build.HARDWARE`, `/proc/cpuinfo` features (`i8mm`, `sve2`, `dotprod`), big-core max frequency, `MemTotal`.
    - **iOS**: `utsname.machine` (e.g. `iPhone16,1`), `NSProcessInfo.processInfo.physicalMemory`.
@@ -157,7 +179,7 @@ How models are chosen:
   alternates with a size-estimated `min_ram`, replaced by real `obs_tg` / measured
   `min_ram` in a later revision once submissions land.
 
-### v2 changes vs the hand-curated v1
+### Curation changes vs the original hand-curated list
 
 - **Lossy sub-3-bit quants removed; native low-bit kept.** Post-training quantization to
   1-2 bit wrecks quality, so it's no longer eligible as a default. But **Bonsai** (PrismML)
