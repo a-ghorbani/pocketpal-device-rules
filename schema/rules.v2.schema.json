@@ -55,7 +55,7 @@
         "candidates": {
           "description": "ORDERED: the first entry per model is the primary recommendation. Gating is evaluated per entry, so a gated entry can be followed by an ungated fallback of the same model.",
           "type": "array",
-          "maxItems": 6,
+          "maxItems": 10,
           "items": {"$ref": "#/$defs/candidate"}
         }
       },

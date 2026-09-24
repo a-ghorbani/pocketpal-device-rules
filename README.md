@@ -198,7 +198,7 @@ How models are chosen:
   **Qwen3.5-2B** (multimodal), and the recent **LFM2.5-1.2B** / **LFM2-2.6B** (Liquid AI,
   on-device-first hybrid arch) so mid is a real, current selection — not just one 3B + one 1B.
   (Qwen3.5-2B is dropped from Android mid on memory — p90 peak 5.0GB > cap — but kept on iOS.)
-- **Max ~6 candidates per tier.** A cap, not a target: short tiers stay
+- **Max 10 candidates per tier** (v2 schema limit; ~6 remains the practical target). A cap, not a target: short tiers stay
   short (never padded with models that don't fit). The trim is diversity-preserving — it
   always keeps the top-ranked models (incl. the primary) plus a guaranteed fast/light
   option and a multimodal option, instead of truncating those (which live at the list tail).
