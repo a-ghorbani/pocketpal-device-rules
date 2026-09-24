@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/a-ghorbani/pocketpal-device-rules/main/schema/rules.v2.schema.json",
+  "title": "PocketPal device rules v2",
+  "description": "rules.<platform>.v2.json. v2 adds per-candidate version gating (min_app_version). Clients that understand v2 fetch the .v2.json files; v1 clients keep reading the frozen rules.<platform>.json and never see gated models. Keys starting with '_' are human-facing policy notes and are ignored by the app.",
+  "type": "object",
+  "required": ["schema_version", "platform", "rules_version", "updated_at", "classifier", "tiers"],
+  "properties": {
+    "$schema": {"type": "string"},
+    "schema_version": {
+      "description": "Semver. Clients accept major 2 only; any other major falls back to the bundled rules.",
+      "type": "string",
+      "pattern": "^2\\.\\d+\\.\\d+(-[0-9A-Za-z.-]+)?$"
+    },
+    "platform": {"enum": ["android", "ios"]},
+    "rules_version": {
+      "description": "YYYY-MM-DD.N, bumped on every content change.",
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}\\.\\d+$"
+    },
+    "updated_at": {"type": "string", "format": "date-time"},
+    "classifier": {"$ref": "#/$defs/classifier"},
+    "tiers": {
+      "type": "object",
+      "required": ["low", "mid", "high", "flagship"],
+      "properties": {
+        "low": {"$ref": "#/$defs/tier"},
+        "mid": {"$ref": "#/$defs/tier"},
+        "high": {"$ref": "#/$defs/tier"},
+        "flagship": {"$ref": "#/$defs/tier"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^_": {}
+  },
+  "additionalProperties": false,
+
+  "$defs": {
+    "semver_core": {
+      "description": "Strict X.Y.Z, no prerelease/build suffix. Compared numerically against the app's version (app side strips its own prerelease/build suffix).",
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "hf_repo": {"type": "string", "pattern": "^[A-Za-z0-9._-]+/[A-Za-z0-9._-]+$"},
+    "hf_filename": {"type": "string", "pattern": "^[A-Za-z0-9._/-]+\\.gguf$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+
+    "tier": {
+      "type": "object",
+      "required": ["candidates"],
+      "properties": {
+        "description": {"type": "string"},
+        "candidates": {
+          "description": "ORDERED: the first entry per model is the primary recommendation. Gating is evaluated per entry, so a gated entry can be followed by an ungated fallback of the same model.",
+          "type": "array",
+          "maxItems": 10,
+          "items": {"$ref": "#/$defs/candidate"}
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "candidate": {
+      "type": "object",
+      "required": ["model", "hf_repo", "hf_filename", "size_bytes"],
+      "properties": {
+        "model": {"type": "string", "minLength": 1},
+        "quant": {"type": "string"},
+        "display_name": {"type": "string"},
+        "hf_repo": {"$ref": "#/$defs/hf_repo"},
+        "hf_filename": {"$ref": "#/$defs/hf_filename"},
+        "params": {"type": "integer", "minimum": 1},
+        "size_bytes": {"type": "integer", "minimum": 1},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "min_ram_gb": {"type": "number", "exclusiveMinimum": 0},
+        "obs_tg": {"type": "number", "exclusiveMinimum": 0},
+        "native_low_bit": {"type": "boolean"},
+        "min_app_version": {
+          "description": "NEW in v2. Lowest PocketPal version that can load this entry (e.g. first release whose llama.rn supports the GGUF architecture). App below it -> entry dropped. Absent -> no gate. Malformed -> entry dropped (fail closed).",
+          "$ref": "#/$defs/semver_core"
+        },
+        "multimodal": {"type": "boolean"},
+        "mmproj": {"$ref": "#/$defs/mmproj"},
+        "draft": {"$ref": "#/$defs/draft"}
+      },
+      "if": {"properties": {"multimodal": {"const": true}}, "required": ["multimodal"]},
+      "then": {"required": ["mmproj"]},
+      "additionalProperties": false
+    },
+
+    "mmproj": {
+      "description": "Vision/audio projector. Must live in the same hf_repo as the model and match the mmproj filename pattern. Invalid or unmet min_app_version drops the WHOLE candidate (no vision model ships without its projector).",
+      "type": "object",
+      "required": ["hf_repo", "hf_filename", "size_bytes"],
+      "properties": {
+        "hf_repo": {"$ref": "#/$defs/hf_repo"},
+        "hf_filename": {"type": "string", "pattern": "(?i)mmproj.*\\.gguf$"},
+        "size_bytes": {"type": "integer", "minimum": 1},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "modalities": {
+          "type": "array",
+          "items": {"enum": ["vision", "audio"]},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "min_app_version": {"$ref": "#/$defs/semver_core"}
+      },
+      "additionalProperties": false
+    },
+
+    "draft": {
+      "description": "Speculative-decoding draft model. Invalid or unmet min_app_version drops ONLY the draft; the target candidate stays.",
+      "type": "object",
+      "required": ["hf_repo", "hf_filename", "size_bytes"],
+      "properties": {
+        "hf_repo": {"$ref": "#/$defs/hf_repo"},
+        "hf_filename": {"$ref": "#/$defs/hf_filename"},
+        "size_bytes": {"type": "integer", "minimum": 1},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "min_app_version": {"$ref": "#/$defs/semver_core"}
+      },
+      "additionalProperties": false
+    },
+
+    "match_map": {
+      "type": "object",
+      "additionalProperties": {"type": "string"}
+    },
+
+    "classifier": {
+      "description": "Unchanged from v1. Android uses soc_model_to_class / hardware_to_class / cpu_heuristic; iOS uses device_id_to_chip / chip_to_class / device_family_fallback.",
+      "type": "object",
+      "required": ["ram_bands", "soc_classes", "tier_matrix"],
+      "properties": {
+        "ram_bands": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "max_bytes"],
+            "properties": {
+              "id": {"type": "string"},
+              "max_bytes": {"type": ["integer", "null"]},
+              "label": {"type": "string"}
+            },
+            "additionalProperties": false
+          }
+        },
+        "soc_classes": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true},
+        "soc_model_to_class": {"$ref": "#/$defs/match_map"},
+        "hardware_to_class": {"$ref": "#/$defs/match_map"},
+        "device_id_to_chip": {"$ref": "#/$defs/match_map"},
+        "chip_to_class": {"$ref": "#/$defs/match_map"},
+        "cpu_heuristic": {"$ref": "#/$defs/rule_list"},
+        "device_family_fallback": {"$ref": "#/$defs/rule_list"},
+        "tier_matrix": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["ram_band", "soc_class", "tier"],
+            "properties": {
+              "ram_band": {"type": "string"},
+              "soc_class": {"type": "string"},
+              "tier": {"enum": ["low", "mid", "high", "flagship"]}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+
+    "rule_list": {
+      "type": "object",
+      "required": ["rules"],
+      "properties": {
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["match", "class"],
+            "properties": {
+              "match": {"type": "object"},
+              "class": {"type": "string"}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}
