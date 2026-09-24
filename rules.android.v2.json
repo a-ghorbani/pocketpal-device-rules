@@ -2,8 +2,8 @@
   "$schema": "https://raw.githubusercontent.com/a-ghorbani/pocketpal-device-rules/main/schema/rules.v2.schema.json",
   "schema_version": "2.0.0",
   "platform": "android",
-  "rules_version": "2026-06-16.1",
-  "updated_at": "2026-06-16T00:00:00Z",
+  "rules_version": "2026-09-24.1",
+  "updated_at": "2026-09-24T00:00:00Z",
   "_quant_policy": "Within each tier, candidates are ORDERED — first per model is the primary recommendation. For ≥3B models Q4_0 is primary (Hex 5× PP speedup, lower load mem); sub-1B uses Q4_K_M.",
   "_selection_policy": {
     "rule": "Candidate enters tier T iff (CPU TG on rep_device[T] >= tier_floors_cpu_tg[T]) AND (peak_load_mem fits ram_band[T] with OS-killer margin). Accelerators may exceed floor but don't change membership.",
@@ -350,7 +350,7 @@
       ]
     },
     "mid": {
-      "description": "7 candidate(s); primary: smollm3-3b. Validated against community benchmarks.",
+      "description": "8 candidate(s); primary: smollm3-3b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "smollm3-3b",
@@ -443,11 +443,23 @@
           "sha256": "8ccc5cd1f1b3602548715ae25a66ed73fd5dc68a210412eea643eb20eb75a135",
           "min_ram_gb": 2.0,
           "obs_tg": 11.2
+        },
+        {
+          "model": "spark-x2.5-1.7b",
+          "display_name": "Spark-X2.5 1.7B",
+          "quant": "q4_k_m",
+          "hf_repo": "XHToken/Spark-X2.5-1.7B-GGUF",
+          "hf_filename": "Spark-X2.5-1.7B-Q4_K_M.gguf",
+          "params": 1707657216,
+          "size_bytes": 1107457856,
+          "sha256": "902bde2522394954ac17821b3e5fd0df02defbc6944f122253f2580acf0503f4",
+          "min_ram_gb": 2.2,
+          "min_app_version": "1.17.3"
         }
       ]
     },
     "high": {
-      "description": "6 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
+      "description": "7 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "gemma-3-4b",
@@ -528,11 +540,23 @@
           "sha256": "8ccc5cd1f1b3602548715ae25a66ed73fd5dc68a210412eea643eb20eb75a135",
           "min_ram_gb": 2.0,
           "obs_tg": 14.1
+        },
+        {
+          "model": "spark-x2.5-1.7b",
+          "display_name": "Spark-X2.5 1.7B",
+          "quant": "q4_k_m",
+          "hf_repo": "XHToken/Spark-X2.5-1.7B-GGUF",
+          "hf_filename": "Spark-X2.5-1.7B-Q4_K_M.gguf",
+          "params": 1707657216,
+          "size_bytes": 1107457856,
+          "sha256": "902bde2522394954ac17821b3e5fd0df02defbc6944f122253f2580acf0503f4",
+          "min_ram_gb": 2.2,
+          "min_app_version": "1.17.3"
         }
       ]
     },
     "flagship": {
-      "description": "6 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
+      "description": "8 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "gemma-3-4b",
@@ -618,6 +642,29 @@
           "sha256": "8ccc5cd1f1b3602548715ae25a66ed73fd5dc68a210412eea643eb20eb75a135",
           "min_ram_gb": 2.0,
           "obs_tg": 23.3
+        },
+        {
+          "model": "qwen3.5-4b",
+          "display_name": "Qwen3.5 4B",
+          "quant": "q4_0",
+          "hf_repo": "unsloth/Qwen3.5-4B-GGUF",
+          "hf_filename": "Qwen3.5-4B-Q4_0.gguf",
+          "params": 4205751296,
+          "size_bytes": 2583221408,
+          "sha256": "298fcb5fe7a77ccc79745ae24751560c5ac56874caff4bb39b1f2055bd72b8bb",
+          "min_ram_gb": 4.3
+        },
+        {
+          "model": "spark-x2.5-4b",
+          "display_name": "Spark-X2.5 4B",
+          "quant": "q4_k_m",
+          "hf_repo": "XHToken/Spark-X2.5-4B-GGUF",
+          "hf_filename": "Spark-X2.5-4B-Q4_K_M.gguf",
+          "params": 4112079360,
+          "size_bytes": 2600224352,
+          "sha256": "adfcfa19a4ed6a5985da8bf565fe15f8e1a7e131d79bae2d19d48d1c40109428",
+          "min_ram_gb": 4.0,
+          "min_app_version": "1.17.3"
         }
       ]
     }
