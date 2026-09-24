@@ -1,0 +1,23 @@
+name: validate
+
+# Offline correctness on every change, plus the Hugging Face metadata check.
+# The slow/flaky network checks (every download URL, jsDelivr freshness) live in links.yml.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install jsonschema
+      - name: Schema + invariants (offline)
+        run: python3 tools/check_rules.py schema invariants
+      - name: Hugging Face metadata (size_bytes / sha256)
+        run: python3 tools/check_rules.py hf
