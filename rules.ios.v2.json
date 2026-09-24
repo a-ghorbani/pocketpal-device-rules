@@ -361,7 +361,7 @@
       ]
     },
     "mid": {
-      "description": "6 candidate(s); primary: smollm3-3b. Validated against community benchmarks.",
+      "description": "7 candidate(s); primary: smollm3-3b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "smollm3-3b",
@@ -440,11 +440,24 @@
           "sha256": "8ccc5cd1f1b3602548715ae25a66ed73fd5dc68a210412eea643eb20eb75a135",
           "min_ram_gb": 1.8,
           "obs_tg": 36.2
+        },
+        {
+          "model": "spark-x2.5-1.7b",
+          "display_name": "Spark-X2.5 1.7B",
+          "quant": "q4_k_m",
+          "hf_repo": "XHToken/Spark-X2.5-1.7B-GGUF",
+          "hf_filename": "Spark-X2.5-1.7B-Q4_K_M.gguf",
+          "params": 1707657216,
+          "size_bytes": 1107457856,
+          "sha256": "902bde2522394954ac17821b3e5fd0df02defbc6944f122253f2580acf0503f4",
+          "min_ram_gb": 2.1,
+          "obs_tg": 25.5,
+          "min_app_version": "1.17.3"
         }
       ]
     },
     "high": {
-      "description": "6 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
+      "description": "7 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "gemma-3-4b",
@@ -532,11 +545,24 @@
           "sha256": "8ccc5cd1f1b3602548715ae25a66ed73fd5dc68a210412eea643eb20eb75a135",
           "min_ram_gb": 1.8,
           "obs_tg": 45.7
+        },
+        {
+          "model": "spark-x2.5-1.7b",
+          "display_name": "Spark-X2.5 1.7B",
+          "quant": "q4_k_m",
+          "hf_repo": "XHToken/Spark-X2.5-1.7B-GGUF",
+          "hf_filename": "Spark-X2.5-1.7B-Q4_K_M.gguf",
+          "params": 1707657216,
+          "size_bytes": 1107457856,
+          "sha256": "902bde2522394954ac17821b3e5fd0df02defbc6944f122253f2580acf0503f4",
+          "min_ram_gb": 2.1,
+          "obs_tg": 24.1,
+          "min_app_version": "1.17.3"
         }
       ]
     },
     "flagship": {
-      "description": "6 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
+      "description": "7 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "gemma-3-4b",
@@ -625,6 +651,18 @@
           "sha256": "8ccc5cd1f1b3602548715ae25a66ed73fd5dc68a210412eea643eb20eb75a135",
           "min_ram_gb": 1.8,
           "obs_tg": 85.6
+        },
+        {
+          "model": "spark-x2.5-4b",
+          "display_name": "Spark-X2.5 4B",
+          "quant": "q4_k_m",
+          "hf_repo": "XHToken/Spark-X2.5-4B-GGUF",
+          "hf_filename": "Spark-X2.5-4B-Q4_K_M.gguf",
+          "params": 4112079360,
+          "size_bytes": 2600224352,
+          "sha256": "adfcfa19a4ed6a5985da8bf565fe15f8e1a7e131d79bae2d19d48d1c40109428",
+          "min_ram_gb": 3.8,
+          "min_app_version": "1.17.3"
         }
       ]
     }
