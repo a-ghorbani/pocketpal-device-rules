@@ -149,6 +149,22 @@ Known limitations:
 - iOS Turso submissions show `flash_attn=0` for all iPhone 13 Pro Bonsai entries even though one was actually FA=ON — iOS bench-submit payload appears to drop the flash_attn init setting. Treat `flash_attn` on iOS Turso rows as unreliable.
 - Mac (macOS) targets are out of scope.
 
+## Checks (CI)
+
+`tools/check_rules.py` — run `python3 tools/check_rules.py all` before proposing an edit (needs `jsonschema`).
+
+| check | when | what it catches |
+|---|---|---|
+| `schema` | every push/PR | malformed entries, against `schema/rules.v1.schema.json` / `rules.v2.schema.json` |
+| `invariants` | every push/PR | entries the **app would silently drop** (missing `size_bytes`, cross-repo `mmproj`, multimodal without a projector, malformed `min_app_version`), duplicate `(model, quant)`, tier cap, classifier gaps (a `(ram_band × soc_class)` with no `tier_matrix` row), and the **v1 freeze**: a model needing a newer app must never appear in the v1 files |
+| `hf` | every push/PR | `size_bytes` / `sha256` that no longer match Hugging Face — repos re-upload under the same name (metadata only, nothing is downloaded) |
+| `urls` | nightly | a model, projector or draft file deleted upstream. `ggml-org/gemma-4-E4B-it-GGUF/…Q4_K_M.gguf` was deleted 2026-07-16 and iOS served a 404 for two months |
+| `cdn` | nightly | jsDelivr still serving a stale `@main` — a merge reaches users only after a [purge](https://purge.jsdelivr.net/gh/a-ghorbani/pocketpal-device-rules@main/rules.android.v2.json) |
+
+A nightly failure opens (or comments on) an issue labelled `automated-links-check`.
+
+Adding a model on a new GGUF architecture: put it in the v2 files with `min_app_version`, and add it to `GATED` in `tools/check_rules.py` so the v1 freeze is enforced for it.
+
 ## Updating the candidate lists
 
 This repo holds **only the data** — no scripts. `rules.android.json` / `rules.ios.json`
