@@ -520,7 +520,7 @@
       ]
     },
     "high": {
-      "description": "8 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
+      "description": "10 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "gemma-3-4b",
@@ -604,6 +604,28 @@
           "obs_tg": 36.0
         },
         {
+          "model": "tiny-aya-global",
+          "display_name": "Tiny Aya Global 3.35B",
+          "quant": "q4_k_m",
+          "hf_repo": "CohereLabs/tiny-aya-global-GGUF",
+          "hf_filename": "tiny-aya-global-q4_k_m.gguf",
+          "params": 3349227520,
+          "size_bytes": 2143977056,
+          "sha256": "d01d995272af305b2b843efcff8a10cf9869cf53e764cb72b0e91b777484570a",
+          "min_ram_gb": 3.2
+        },
+        {
+          "model": "granite-4.2-3b",
+          "display_name": "Granite 4.2 3B",
+          "quant": "q4_k_m",
+          "hf_repo": "ibm-granite/granite-4.2-3b-GGUF",
+          "hf_filename": "granite-4.2-3b-Q4_K_M.gguf",
+          "params": 3659737600,
+          "size_bytes": 2244011552,
+          "sha256": "e0406663965846ae22a403456eb826ccce5f450840491f71952f18a7cb78e7d5",
+          "min_ram_gb": 2.9
+        },
+        {
           "model": "bonsai-8b",
           "display_name": "Bonsai 8B",
           "quant": "q1_0",
@@ -643,7 +665,7 @@
       ]
     },
     "flagship": {
-      "description": "7 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
+      "description": "9 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "gemma-3-4b",
@@ -720,6 +742,28 @@
             "size_bytes": 672423616,
             "modalities": ["vision"]
           }
+        },
+        {
+          "model": "tiny-aya-global",
+          "display_name": "Tiny Aya Global 3.35B",
+          "quant": "q4_k_m",
+          "hf_repo": "CohereLabs/tiny-aya-global-GGUF",
+          "hf_filename": "tiny-aya-global-q4_k_m.gguf",
+          "params": 3349227520,
+          "size_bytes": 2143977056,
+          "sha256": "d01d995272af305b2b843efcff8a10cf9869cf53e764cb72b0e91b777484570a",
+          "min_ram_gb": 3.2
+        },
+        {
+          "model": "granite-4.2-3b",
+          "display_name": "Granite 4.2 3B",
+          "quant": "q4_k_m",
+          "hf_repo": "ibm-granite/granite-4.2-3b-GGUF",
+          "hf_filename": "granite-4.2-3b-Q4_K_M.gguf",
+          "params": 3659737600,
+          "size_bytes": 2244011552,
+          "sha256": "e0406663965846ae22a403456eb826ccce5f450840491f71952f18a7cb78e7d5",
+          "min_ram_gb": 2.9
         },
         {
           "model": "gemma-3-1b",

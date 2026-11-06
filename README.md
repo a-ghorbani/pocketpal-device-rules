@@ -195,12 +195,17 @@ Raw reports: `.../2026-11-06-list-refresh/ios/`.
 | qwen3.5-0.8b (Q4_K_M) | 45.5 | 775 | 1156 | 2.0 (+projector) |
 | control lfm2-2.6b (Q4_K_M) | 18.7 | 215 | 1906 | 2.2 (shipped 2.3) |
 | control qwen3-1.7b (Q4_K_M) | 25.0 | 373 | 1653 | 1.9 (shipped 2.0) |
+| tiny-aya-global (Q4_K_M), 1 run | 12.5 | 186 | 2814 | 3.2 |
+| granite-4.2-3b (Q4_K_M), 1 run | 13.5 | 166 | 2494 | 2.9 |
 
 iOS changes: Spark-X2.5 removed; qwen3-1.7b removed from mid (qwen3.5-2b already there);
 qwen3-0.6b → qwen3.5-0.8b (low); lfm2-2.6b → lfm2.5-2.6b, + lfm3-1.7b and lfm3-vl-2b (gated
 1.22.0) + lfm2.5-vl-1.6b (mid); + lfm2.5-vl-450m (low) and lfm2.5-vl-3b (high), same `lfm2`
 arch/projector as the measured VL-1.6B, `min_ram_gb` = Android × 0.92. Bonsai stays on iOS
-(Metal has the fast Q1_0 path). tiny-aya, granite and Ling are Android-only until checked on Metal.
+(Metal has the fast Q1_0 path). tiny-aya and granite (high + flagship): `cohere2` / `granite` load
+and run fully on Metal on the A15; their high/flagship speed is extrapolated with the chip-class
+scaling above (~17-19 tg on A16/A18, ~25-27 on A-Pro), not measured. Ling stays Android-only
+(4.6 GB file, not checked on Metal).
 
 ### iOS — partial measurement + extrapolation
 
@@ -330,8 +335,8 @@ How models are chosen:
 
 ## v2 follow-ups
 
-- **iOS**: tiny-aya / granite-4.2-3b (Metal arch check queued) and Ling-3.0-tiny; the vision
-  projectors are not exercised by the bench on either platform.
+- **iOS**: Ling-3.0-tiny (not checked on Metal); tiny-aya / granite high+flagship speeds are
+  extrapolated. The vision projectors are not exercised by the bench on either platform.
 - **Ternary-Bonsai-2** (2B/4B/9B, Q2_0) as the native-low-bit successor of the removed Android
   Bonsai entries: gate 1.22.0 (Hadamard runtime), measure Q2_0 kernel speed first.
 - **Stale `obs_tg`** on entries kept from the community data (e.g. Android gemma-4-e4b 6.5 vs
