@@ -307,7 +307,7 @@
   },
   "tiers": {
     "low": {
-      "description": "4 candidate(s); primary: gemma-3-1b. Validated against community benchmarks.",
+      "description": "5 candidate(s); primary: gemma-3-1b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "gemma-3-1b",
@@ -364,11 +364,30 @@
           "sha256": "7e6f72643caafc9a68256686638c4d7916f2cec76d1df478d4c3ddcd95a6aed4",
           "min_ram_gb": 1.1,
           "obs_tg": 88.2
+        },
+        {
+          "model": "lfm2.5-vl-450m",
+          "display_name": "LFM2.5-VL 450M",
+          "quant": "q4_k_m",
+          "hf_repo": "LiquidAI/LFM2.5-VL-450M-GGUF",
+          "hf_filename": "LFM2.5-VL-450M-Q4_K_M.gguf",
+          "params": 354483968,
+          "size_bytes": 229313568,
+          "sha256": "1093f1331319199bbcacdbd7ecc9aa6e5678db6b55073948d0f508be90c8ab68",
+          "min_ram_gb": 1.2,
+          "multimodal": true,
+          "mmproj": {
+            "hf_repo": "LiquidAI/LFM2.5-VL-450M-GGUF",
+            "hf_filename": "mmproj-LFM2.5-VL-450m-Q8_0.gguf",
+            "size_bytes": 102815168,
+            "sha256": "ebfc428baa37efad8bae93864f914b2634a09009f91ad59f974fe1a1565d8561",
+            "modalities": ["vision"]
+          }
         }
       ]
     },
     "mid": {
-      "description": "6 candidate(s); primary: smollm3-3b. Validated against community benchmarks.",
+      "description": "9 candidate(s); primary: smollm3-3b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "smollm3-3b",
@@ -391,6 +410,18 @@
           "size_bytes": 1674455040,
           "sha256": "02a8b7e17487d326e46d68ce0ba24211e1b80a14c4cd0597fa73c1cd697f52ed",
           "min_ram_gb": 2.6
+        },
+        {
+          "model": "lfm3-1.7b",
+          "display_name": "LFM3 1.7B",
+          "quant": "q4_0",
+          "hf_repo": "LiquidAI/LFM3-1.7B-GGUF",
+          "hf_filename": "LFM3-1.7B-QAD-Q4_0.gguf",
+          "params": 1728801600,
+          "size_bytes": 1049615680,
+          "sha256": "43a7d09a0e9cba91b63eb7052488b9564569bddfd65754d2e426465e572a7452",
+          "min_ram_gb": 1.9,
+          "min_app_version": "1.22.0"
         },
         {
           "model": "lfm2.5-1.2b",
@@ -424,6 +455,45 @@
           }
         },
         {
+          "model": "lfm3-vl-2b",
+          "display_name": "LFM3-VL 2B",
+          "quant": "q4_0",
+          "hf_repo": "LiquidAI/LFM3-VL-2B-GGUF",
+          "hf_filename": "LFM3-VL-2B-QAD-Q4_0.gguf",
+          "params": 1728801600,
+          "size_bytes": 1049615648,
+          "sha256": "621c455376cb96a20891697deb9975c6fb47dd5ea98ed3ad1f3b7e8f24f0b1e6",
+          "min_ram_gb": 2.5,
+          "min_app_version": "1.22.0",
+          "multimodal": true,
+          "mmproj": {
+            "hf_repo": "LiquidAI/LFM3-VL-2B-GGUF",
+            "hf_filename": "mmproj-LFM3-VL-2B-Q8_0.gguf",
+            "size_bytes": 203031872,
+            "sha256": "c5c5b58d544a18da919172d2d0368090ea1a4a351b6feb7f8a326a264a5918ab",
+            "modalities": ["vision"]
+          }
+        },
+        {
+          "model": "lfm2.5-vl-1.6b",
+          "display_name": "LFM2.5-VL 1.6B",
+          "quant": "q4_0",
+          "hf_repo": "LiquidAI/LFM2.5-VL-1.6B-GGUF",
+          "hf_filename": "LFM2.5-VL-1.6B-Q4_0.gguf",
+          "params": 1170340608,
+          "size_bytes": 695752480,
+          "sha256": "8186364a4e7c3ad30f6dd3d3b7a4e0074c77dd91eed6cad5d8be9090ce285804",
+          "min_ram_gb": 2.3,
+          "multimodal": true,
+          "mmproj": {
+            "hf_repo": "LiquidAI/LFM2.5-VL-1.6B-GGUF",
+            "hf_filename": "mmproj-LFM2.5-VL-1.6b-Q8_0.gguf",
+            "size_bytes": 583109888,
+            "sha256": "2ce89e610c56f3198ece2b86cf61743a08b9307279c89125eb2412ebb908689d",
+            "modalities": ["vision"]
+          }
+        },
+        {
           "model": "gemma-3-1b",
           "display_name": "Gemma 3 1B",
           "quant": "q4_k_m",
@@ -450,7 +520,7 @@
       ]
     },
     "high": {
-      "description": "7 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
+      "description": "8 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "gemma-3-4b",
@@ -499,6 +569,25 @@
             "hf_repo": "unsloth/Qwen3.5-4B-GGUF",
             "hf_filename": "mmproj-F16.gguf",
             "size_bytes": 672423616,
+            "modalities": ["vision"]
+          }
+        },
+        {
+          "model": "lfm2.5-vl-3b",
+          "display_name": "LFM2.5-VL 3B",
+          "quant": "q4_0",
+          "hf_repo": "LiquidAI/LFM2.5-VL-3B-GGUF",
+          "hf_filename": "LFM2.5-VL-3B-Q4_0.gguf",
+          "params": 2697198592,
+          "size_bytes": 1593894944,
+          "sha256": "364224c6bd45b4ff4bf8af71f7be384ea166fa0f573d68bc0b6e10ef9ae7ae58",
+          "min_ram_gb": 3.5,
+          "multimodal": true,
+          "mmproj": {
+            "hf_repo": "LiquidAI/LFM2.5-VL-3B-GGUF",
+            "hf_filename": "mmproj-LFM2.5-VL-3B-Q8_0.gguf",
+            "size_bytes": 583109984,
+            "sha256": "ecbbe7097f696dba67172738d79c9f01132cdb6c0b457606315e268df3d67e64",
             "modalities": ["vision"]
           }
         },

@@ -180,11 +180,27 @@ low/mid/high, and lfm2.5-8b-a1b is the fast option on flagship). Gated replaceme
 ungated predecessor-class model as fallback (lfm2.5-1.2b behind lfm3-1.7b, lfm2.5-vl-1.6b behind
 lfm3-vl-2b) while 1.22.0 is new.
 
-**iOS** in this revision only takes changes that need no new Metal evidence: Spark-X2.5 removed,
-qwen3-1.7b removed from mid (qwen3.5-2b already there), qwen3-0.6b → qwen3.5-0.8b (qwen35 +
-qwen3vl projector already ship on iOS), lfm2-2.6b → lfm2.5-2.6b (same `lfm2` arch). iOS
-`min_ram_gb` for these = Android value × 0.92 (the ratio of the shipped measured pairs). LFM3,
-the LFM2.5-VL models, tiny-aya, granite and Ling wait for the iPhone 13 Pro run.
+**iOS** — iPhone 13 Pro (A15, 6 GiB, the iOS mid rep device), v1.22.0 E2E build, Metal
+`ngl=99`, pp512/tg128 nr=3, 2 cold launches each, all full offload, no crash/jetsam. Peak =
+process-lifetime `phys_footprint` (the jetsam number, not the harness's `resident_size`).
+`min_ram_gb` = peak × 1.15 (README iOS rule); vision adds projector + 0.4 GiB as on Android.
+Raw reports: `.../2026-11-06-list-refresh/ios/`.
+
+| model | tg (tok/s) | pp512 | peak phys_footprint MiB | min_ram_gb |
+|---|---|---|---|---|
+| lfm3-1.7b (QAD Q4_0), gated 1.22.0 | 27.3 | 412 | 1638 | 1.9 |
+| lfm3-vl-2b (QAD Q4_0, text), gated 1.22.0 | 27.4 | 427 | 1635 | 2.5 (+projector) |
+| lfm2.5-2.6b (Q4_K_M) | 17.3 | 214 | 2246 | 2.6 |
+| lfm2.5-vl-1.6b (Q4_0, text) | 40.9 | 620 | 1056 | 2.3 (+projector) |
+| qwen3.5-0.8b (Q4_K_M) | 45.5 | 775 | 1156 | 2.0 (+projector) |
+| control lfm2-2.6b (Q4_K_M) | 18.7 | 215 | 1906 | 2.2 (shipped 2.3) |
+| control qwen3-1.7b (Q4_K_M) | 25.0 | 373 | 1653 | 1.9 (shipped 2.0) |
+
+iOS changes: Spark-X2.5 removed; qwen3-1.7b removed from mid (qwen3.5-2b already there);
+qwen3-0.6b → qwen3.5-0.8b (low); lfm2-2.6b → lfm2.5-2.6b, + lfm3-1.7b and lfm3-vl-2b (gated
+1.22.0) + lfm2.5-vl-1.6b (mid); + lfm2.5-vl-450m (low) and lfm2.5-vl-3b (high), same `lfm2`
+arch/projector as the measured VL-1.6B, `min_ram_gb` = Android × 0.92. Bonsai stays on iOS
+(Metal has the fast Q1_0 path). tiny-aya, granite and Ling are Android-only until checked on Metal.
 
 ### iOS — partial measurement + extrapolation
 
@@ -314,9 +330,8 @@ How models are chosen:
 
 ## v2 follow-ups
 
-- **iOS half of the 2026-11-06 refresh**: LFM3-1.7B / LFM3-VL-2B (gated 1.22.0), LFM2.5-VL
-  450M/1.6B/3B, tiny-aya, granite-4.2-3b, Ling-3.0-tiny — pending the iPhone 13 Pro run
-  (does `lfm3` run on Metal, peak footprint vs jetsam).
+- **iOS**: tiny-aya / granite-4.2-3b (Metal arch check queued) and Ling-3.0-tiny; the vision
+  projectors are not exercised by the bench on either platform.
 - **Ternary-Bonsai-2** (2B/4B/9B, Q2_0) as the native-low-bit successor of the removed Android
   Bonsai entries: gate 1.22.0 (Hadamard runtime), measure Q2_0 kernel speed first.
 - **Stale `obs_tg`** on entries kept from the community data (e.g. Android gemma-4-e4b 6.5 vs
