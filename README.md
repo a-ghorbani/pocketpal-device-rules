@@ -173,6 +173,15 @@ encoding — this reproduces the shipped lfm2-vl-1.6b value (2.5). Raw data and 
 | qwen3.5-4b (Q4_0) | kept flagship-only (S23 still below the high floor) | | | **9.2** | 10.5 | 18.0 | 3.58 |
 | gemma-4-e4b / lfm2.5-8b-a1b / ministral-3-3b (Q4_0) | kept (flagship) | | | | | 16.8 / 49.5 / 22.8 | 3.0–5.4 |
 | nemotron-3.5-bolt-e4b (Q4_K_M) | not added: 5.8 GiB peak (LMK risk on 12 GiB), 14.5 tg, same niche as gemma-4-e4b | | | | | 14.5 | 5.78 |
+| ternary-bonsai-2-2b (Q2_0, native ternary) | **added** mid, gated 1.22.0 (+vision) | | 15.5 | 16.9 | 18.9 | | 1.10 |
+| ternary-bonsai-2-4b (Q2_0) | not added: below mid/high floors, flagship only (14.4) with pp ~22 | | 5.6 | 6.7 | 8.1 | 14.4 | 1.82 |
+| ternary-bonsai-2-9b (Q2_0) | not added: below every floor | | | 3.6 | 4.4 | 7.1 | 3.15 |
+
+**Ternary-Bonsai-2** (prism-ml, 2026-09-23) is the successor of the removed Android Bonsai
+entries. Its Q2_0 files need the `prism.hadamard` runtime: app 1.17.0–1.20.x load them but
+produce wrong output, so it is gated 1.22.0 (and in `GATED`). Output was checked on v1.22.0 (iPhone
+13 Pro chat: "Paris", "Red, Yellow, Blue" on 2B/4B/9B). On Android CPU prompt processing is slow
+(pp512 ~30 tok/s on the 2B vs 65-100 for qwen3.5-2b), so it ships as the last mid alternate.
 
 Also removed: **Spark-X2.5** everywhere (Spark-X2.6 covers the same tiers under the same 1.17.3
 gate) and **gemma-3-1b from Android flagship** (to stay within the 10-candidate cap; it stays in
@@ -195,12 +204,14 @@ Raw reports: `.../2026-11-06-list-refresh/ios/`.
 | qwen3.5-0.8b (Q4_K_M) | 45.5 | 775 | 1156 | 2.0 (+projector) |
 | control lfm2-2.6b (Q4_K_M) | 18.7 | 215 | 1906 | 2.2 (shipped 2.3) |
 | control qwen3-1.7b (Q4_K_M) | 25.0 | 373 | 1653 | 1.9 (shipped 2.0) |
+| ternary-bonsai-2-2b (Q2_0), gated 1.22.0 | 37.6 | 381 | 1059 | 2.0 (+projector) |
+| ternary-bonsai-2-4b / 9b (Q2_0) | 17.1 / 7.8 | 144 / 66 | 1835 / 3085 | not added (mid is at the 10 cap; 9B below floor) |
 | tiny-aya-global (Q4_K_M), 1 run | 12.5 | 186 | 2814 | 3.2 |
 | granite-4.2-3b (Q4_K_M), 1 run | 13.5 | 166 | 2494 | 2.9 |
 
 iOS changes: Spark-X2.5 removed; qwen3-1.7b removed from mid (qwen3.5-2b already there);
 qwen3-0.6b → qwen3.5-0.8b (low); lfm2-2.6b → lfm2.5-2.6b, + lfm3-1.7b and lfm3-vl-2b (gated
-1.22.0) + lfm2.5-vl-1.6b (mid); + lfm2.5-vl-450m (low) and lfm2.5-vl-3b (high), same `lfm2`
+1.22.0) + lfm2.5-vl-1.6b and ternary-bonsai-2-2b (gated 1.22.0) (mid); + lfm2.5-vl-450m (low) and lfm2.5-vl-3b (high), same `lfm2`
 arch/projector as the measured VL-1.6B, `min_ram_gb` = Android × 0.92. Bonsai stays on iOS
 (Metal has the fast Q1_0 path). tiny-aya and granite (high + flagship): `cohere2` / `granite` load
 and run fully on Metal on the A15; their high/flagship speed is extrapolated with the chip-class
@@ -337,8 +348,8 @@ How models are chosen:
 
 - **iOS**: Ling-3.0-tiny (not checked on Metal); tiny-aya / granite high+flagship speeds are
   extrapolated. The vision projectors are not exercised by the bench on either platform.
-- **Ternary-Bonsai-2** (2B/4B/9B, Q2_0) as the native-low-bit successor of the removed Android
-  Bonsai entries: gate 1.22.0 (Hadamard runtime), measure Q2_0 kernel speed first.
+- **Ternary-Bonsai-2-4B on iOS** (17.1 tg on A15, clears mid/high) once a tier has room; retire
+  the iOS Q1_0 Bonsai entries in favour of Bonsai-2 when 1.22.0 is widely adopted.
 - **Stale `obs_tg`** on entries kept from the community data (e.g. Android gemma-4-e4b 6.5 vs
   16.8 measured on Myron, gemma-3-4b high 6.6 vs 10.7-11.7). Not touched in this refresh.
 - Vision `min_ram_gb` is estimated from LM peak + projector size; measure with an image loaded

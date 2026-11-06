@@ -45,6 +45,7 @@ GATED = {
     "lfm3-1.7b": "1.22.0",
     "lfm3-vl-2b": "1.22.0",
     "ling-3.0-tiny": "1.17.2",
+    "ternary-bonsai-2-2b": "1.22.0",
 }
 
 errors: list[str] = []

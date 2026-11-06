@@ -363,7 +363,7 @@
       ]
     },
     "mid": {
-      "description": "9 candidate(s); primary: smollm3-3b. Validated against community benchmarks.",
+      "description": "10 candidate(s); primary: smollm3-3b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "smollm3-3b",
@@ -492,6 +492,27 @@
           "sha256": "7abd9859c10924be3c583945456fa9b25d0569484876105a7b7376f7938fffb7",
           "min_ram_gb": 2.6,
           "min_app_version": "1.17.3"
+        },
+        {
+          "model": "ternary-bonsai-2-2b",
+          "display_name": "Ternary Bonsai 2 2B",
+          "quant": "q2_0",
+          "hf_repo": "prism-ml/Ternary-Bonsai-2-2B-gguf",
+          "hf_filename": "Ternary-Bonsai-2-2B-Q2_0.gguf",
+          "params": 1881825088,
+          "size_bytes": 546689504,
+          "sha256": "c2893fa6f951daee8b7263d5f49b455e57989ef56417a22125b03566dc560650",
+          "min_ram_gb": 2.2,
+          "native_low_bit": true,
+          "min_app_version": "1.22.0",
+          "multimodal": true,
+          "mmproj": {
+            "hf_repo": "prism-ml/Ternary-Bonsai-2-2B-gguf",
+            "hf_filename": "Ternary-Bonsai-2-2B-mmproj-Q8_0.gguf",
+            "size_bytes": 364664352,
+            "sha256": "ac9934e8d7966d0d62442c202ec8fdad99a045dea79366c1a4a246a46f5c0533",
+            "modalities": ["vision"]
+          }
         }
       ]
     },
