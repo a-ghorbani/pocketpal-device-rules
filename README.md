@@ -31,7 +31,7 @@ v2 adds one optional field, `min_app_version` (strict `X.Y.Z`), on a candidate a
 | `mmproj` | **whole candidate** dropped (a vision model never ships without its projector) |
 | `draft` | only the draft dropped; the target stays |
 
-Set it to the first PocketPal release whose llama.rn supports the model's GGUF `general.architecture`. Known cut-offs: `lfm2` / `lfm2moe` / LFM2 vision projector: all v2 clients (no field needed); `nanbeige`: 1.17.0; `spark2_5`: 1.17.3. Candidates are ordered and gated per entry, so a gated entry may be followed by an ungated fallback.
+Set it to the first PocketPal release whose llama.rn supports the model's GGUF `general.architecture`. Known cut-offs: `lfm2` / `lfm2moe` / LFM2 vision projector: all v2 clients (no field needed); `nanbeige`: 1.17.0; `bailingmoe3` (Ling 3.0): 1.17.2; `spark2_5`: 1.17.3; `lfm3` and its `lfm3vl` projector: 1.22.0; `prism.hadamard` runtime (Ternary-Bonsai-2 Q2_0 — older apps load it but produce wrong output): 1.22.0. Candidates are ordered and gated per entry, so a gated entry may be followed by an ungated fallback.
 
 Rollout rule: a v2 file must be live on `@main` (and jsDelivr purged) **before** an app build that fetches it ships. Until then the app falls back to its bundled rules on the 404, which is safe but stale.
 
@@ -137,6 +137,54 @@ Models considered and excluded:
 - **Qwen3-VL-8B-Thinking** — Myron only (7 TG).
 - **Gemma-4-E4B** — Myron only at 10-11 TG (just below 12 floor). Reasonable v1.1 candidate if floor relaxed.
 - **Phi-4-mini-reasoning Q4_K_M on high tier** — S23 7.2 / Klee 9.1 (below 10 floor); high tier ships Q4_0 only.
+
+#### 2026-11-06 list refresh (rules_version 2026-11-06.1)
+
+In-app e2e harness on the shipped v1.22.0 e2e build (llama.rn 0.13.0-rc.9, llama libs
+byte-identical on every phone), CPU backend, pp512/tg128 nr=3, one model per cold launch, each
+model twice (forward then reversed order), every cell started at ≤33 °C. Peak = the app's own
+VmHWM. Text models: `min_ram_gb` = max VmHWM over all phones (GiB) × 1.20. Vision models (the
+harness doesn't load projectors): (LM VmHWM + projector file) × 1.20 + 0.4 GiB for image
+encoding — this reproduces the shipped lfm2-vl-1.6b value (2.5). Raw data and driver:
+`rd-team/evaluation/benchmarks/2026-11-06-list-refresh/`.
+
+| model (quant) | role | OP6 low ≥5 | Tokay mid ≥8 | S23 high ≥10 | Klee high ≥10 | Myron flag ≥12 | peak GiB |
+|---|---|---|---|---|---|---|---|
+| qwen3.5-0.8b (Q4_K_M) | **added** low (replaces qwen3-0.6b) | 11.8 | 29.2 | | | | 1.19 |
+| qwen3-0.6b (Q4_K_M) | removed (superseded) | 11.2 | | | | | 1.03 |
+| lfm2.5-vl-450m (Q4_K_M) | **added** low (first low-tier vision) | 26.8 | | | | | 0.58 |
+| bonsai-1.7b (Q1_0) | **removed** Android low | **3.3–3.8** | | | | | 0.82 |
+| qwen3.5-2b (Q4_K_M) | **added** Android mid + high (replaces qwen3-1.7b) | | 13.5 | 18.2 | 20.2 | | 2.09 |
+| qwen3-1.7b (Q4_K_M) | removed (superseded) | | 14.5 | | | | 1.85 |
+| lfm2.5-2.6b (QAD Q4_0) | **added** mid (replaces lfm2-2.6b) | | 12.6 | 18.6 | 20.4 | | 2.19 |
+| lfm2-2.6b (Q4_K_M) | removed (vendor-declared successor) | | 11.8 | | | | 2.04 |
+| lfm3-1.7b (QAD Q4_0) | **added** mid + high, gated 1.22.0 | | 18.6 | 26.8 | 28.1 | | 1.73 |
+| lfm3-vl-2b (QAD Q4_0) | **added** mid, gated 1.22.0 (replaces lfm2-vl-1.6b) | | 18.5 | | | | 1.66 |
+| lfm2.5-vl-1.6b (Q4_0) | **added** mid, ungated successor of lfm2-vl-1.6b | | 28.2 | | | | 1.21 |
+| lfm2-vl-1.6b (Q4_0) | removed (superseded) | | 28.2 | | | | 1.21 |
+| lfm2.5-vl-3b (Q4_0) | **added** high | | | 18.8 | 20.5 | | 2.16 |
+| tiny-aya-global (Q4_0) | **added** high + flagship (multilingual) | | | 12.5 | 13.2 | 24.0 | 3.02 |
+| granite-4.2-3b (Q4_0) | **added** high + flagship | | | 12.0 | 12.6 | 22.5 | 2.66 |
+| ling-3.0-tiny (Q4_0, 8B-A1B MoE) | **added** flagship, gated 1.17.2 | | | | | 44.1 | 4.64 |
+| bonsai-8b (Q1_0) | **removed** Android mid + high | | **4.5** | **5.7** | **6.8** | | 1.93 |
+| bonsai-4b (Q1_0) | **removed** Android high (rep device S23 below floor) | | | **9.7** | 10.8 | | 1.38 |
+| smollm3-3b (Q4_0) | kept (mid) | | 9.4 | | | | 2.49 |
+| gemma-3-4b / gemma-4-e2b / phi-4-mini (Q4_0) | kept (high) | | | 10.7 / 16.8 / 10.5 | 11.7 / 16.4 / 11.4 | | 3.3–3.7 |
+| qwen3.5-4b (Q4_0) | kept flagship-only (S23 still below the high floor) | | | **9.2** | 10.5 | 18.0 | 3.58 |
+| gemma-4-e4b / lfm2.5-8b-a1b / ministral-3-3b (Q4_0) | kept (flagship) | | | | | 16.8 / 49.5 / 22.8 | 3.0–5.4 |
+| nemotron-3.5-bolt-e4b (Q4_K_M) | not added: 5.8 GiB peak (LMK risk on 12 GiB), 14.5 tg, same niche as gemma-4-e4b | | | | | 14.5 | 5.78 |
+
+Also removed: **Spark-X2.5** everywhere (Spark-X2.6 covers the same tiers under the same 1.17.3
+gate) and **gemma-3-1b from Android flagship** (to stay within the 10-candidate cap; it stays in
+low/mid/high, and lfm2.5-8b-a1b is the fast option on flagship). Gated replacements keep their
+ungated predecessor-class model as fallback (lfm2.5-1.2b behind lfm3-1.7b, lfm2.5-vl-1.6b behind
+lfm3-vl-2b) while 1.22.0 is new.
+
+**iOS** in this revision only takes changes that need no new Metal evidence: Spark-X2.5 removed,
+qwen3-1.7b removed from mid (qwen3.5-2b already there), qwen3-0.6b → qwen3.5-0.8b (qwen35 +
+qwen3vl projector already ship on iOS), lfm2-2.6b → lfm2.5-2.6b (same `lfm2` arch). iOS
+`min_ram_gb` for these = Android value × 0.92 (the ratio of the shipped measured pairs). LFM3,
+the LFM2.5-VL models, tiny-aya, granite and Ling wait for the iPhone 13 Pro run.
 
 ### iOS — partial measurement + extrapolation
 
@@ -266,6 +314,15 @@ How models are chosen:
 
 ## v2 follow-ups
 
+- **iOS half of the 2026-11-06 refresh**: LFM3-1.7B / LFM3-VL-2B (gated 1.22.0), LFM2.5-VL
+  450M/1.6B/3B, tiny-aya, granite-4.2-3b, Ling-3.0-tiny — pending the iPhone 13 Pro run
+  (does `lfm3` run on Metal, peak footprint vs jetsam).
+- **Ternary-Bonsai-2** (2B/4B/9B, Q2_0) as the native-low-bit successor of the removed Android
+  Bonsai entries: gate 1.22.0 (Hadamard runtime), measure Q2_0 kernel speed first.
+- **Stale `obs_tg`** on entries kept from the community data (e.g. Android gemma-4-e4b 6.5 vs
+  16.8 measured on Myron, gemma-3-4b high 6.6 vs 10.7-11.7). Not touched in this refresh.
+- Vision `min_ram_gb` is estimated from LM peak + projector size; measure with an image loaded
+  once the e2e harness can load a projector.
 - **Calibrate + integrate community peak telemetry.** The `peak_memory_usage` ingestion bug
   is fixed + backfilled (2026-06-10), but the raw data is noisy and miscalibrated vs the
   hand-measured bench (overshoots Android ~+0.5–1.9 GB, undershoots iOS ~0.5–1.3 GB). Before

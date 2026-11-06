@@ -42,6 +42,9 @@ GATED = {
     "spark-x2.6-1.7b": "1.17.3",
     "spark-x2.6-4b": "1.17.3",
     "nanbeige4.2-3b": "1.17.0",
+    "lfm3-1.7b": "1.22.0",
+    "lfm3-vl-2b": "1.22.0",
+    "ling-3.0-tiny": "1.17.2",
 }
 
 errors: list[str] = []

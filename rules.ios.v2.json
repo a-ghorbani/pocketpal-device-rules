@@ -2,8 +2,8 @@
   "$schema": "https://raw.githubusercontent.com/a-ghorbani/pocketpal-device-rules/main/schema/rules.v2.schema.json",
   "schema_version": "2.0.0",
   "platform": "ios",
-  "rules_version": "2026-11-04.1",
-  "updated_at": "2026-11-04T00:00:00Z",
+  "rules_version": "2026-11-06.1",
+  "updated_at": "2026-11-06T00:00:00Z",
   "_status": "v1-partial-measured",
   "_quant_policy": "Q4_K_M is primary for Q4 family on Metal (no Q4_0 fastpath like Android Hex). Metal HAS a Q1_0 fastpath that Android lacks — Bonsai variants are real speed+footprint plays on iOS.",
   "_selection_policy": {
@@ -335,16 +335,23 @@
           "native_low_bit": true
         },
         {
-          "model": "qwen3-0.6b",
-          "display_name": "Qwen3 0.6B",
+          "model": "qwen3.5-0.8b",
+          "display_name": "Qwen3.5 0.8B",
           "quant": "q4_k_m",
-          "hf_repo": "bartowski/Qwen_Qwen3-0.6B-GGUF",
-          "hf_filename": "Qwen_Qwen3-0.6B-Q4_K_M.gguf",
-          "params": 751632384,
-          "size_bytes": 484220320,
-          "sha256": "9acfc1e001311f34b4252001b626f2e466d592a42065f66571bff3790d4e1b14",
-          "min_ram_gb": 1.2,
-          "obs_tg": 49.3
+          "hf_repo": "unsloth/Qwen3.5-0.8B-GGUF",
+          "hf_filename": "Qwen3.5-0.8B-Q4_K_M.gguf",
+          "params": 752393024,
+          "size_bytes": 532517120,
+          "sha256": "bd258782e35f7f458f8aced1adc053e6e92e89bc735ba3be89d38a06121dc517",
+          "min_ram_gb": 2.0,
+          "multimodal": true,
+          "mmproj": {
+            "hf_repo": "unsloth/Qwen3.5-0.8B-GGUF",
+            "hf_filename": "mmproj-F16.gguf",
+            "size_bytes": 204987232,
+            "sha256": "56e4c6cfe73b0c82e3e82bc518d7591997e61d81f723fc41a586f4fa69ea2453",
+            "modalities": ["vision"]
+          }
         },
         {
           "model": "lfm2.5-350m",
@@ -361,7 +368,7 @@
       ]
     },
     "mid": {
-      "description": "8 candidate(s); primary: smollm3-3b. Validated against community benchmarks.",
+      "description": "6 candidate(s); primary: smollm3-3b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "smollm3-3b",
@@ -375,28 +382,15 @@
           "min_ram_gb": 2.8
         },
         {
-          "model": "lfm2-2.6b",
-          "display_name": "LFM2 2.6B",
+          "model": "lfm2.5-2.6b",
+          "display_name": "LFM2.5 2.6B",
           "quant": "q4_k_m",
-          "hf_repo": "LiquidAI/LFM2-2.6B-GGUF",
-          "hf_filename": "LFM2-2.6B-Q4_K_M.gguf",
-          "params": 2569272320,
-          "size_bytes": 1563668704,
-          "sha256": "384bc877b6c37064982f96885bef69e4475919f5969218ed4e3b9399ae0340df",
-          "min_ram_gb": 2.3,
-          "obs_tg": 25.4
-        },
-        {
-          "model": "qwen3-1.7b",
-          "display_name": "Qwen3 1.7B",
-          "quant": "q4_k_m",
-          "hf_repo": "bartowski/Qwen_Qwen3-1.7B-GGUF",
-          "hf_filename": "Qwen_Qwen3-1.7B-Q4_K_M.gguf",
-          "params": 2031739904,
-          "size_bytes": 1282439584,
-          "sha256": "72c5c3cb38fa32d5256e2fe30d03e7a64c6c79e668ad84057e3bd66e250b24fb",
-          "min_ram_gb": 2.0,
-          "obs_tg": 23.8
+          "hf_repo": "LiquidAI/LFM2.5-2.6B-GGUF",
+          "hf_filename": "LFM2.5-2.6B-Q4_K_M.gguf",
+          "params": 2697198592,
+          "size_bytes": 1674455040,
+          "sha256": "02a8b7e17487d326e46d68ce0ba24211e1b80a14c4cd0597fa73c1cd697f52ed",
+          "min_ram_gb": 2.6
         },
         {
           "model": "lfm2.5-1.2b",
@@ -442,19 +436,6 @@
           "obs_tg": 36.2
         },
         {
-          "model": "spark-x2.5-1.7b",
-          "display_name": "Spark-X2.5 1.7B",
-          "quant": "q4_k_m",
-          "hf_repo": "XHToken/Spark-X2.5-1.7B-GGUF",
-          "hf_filename": "Spark-X2.5-1.7B-Q4_K_M.gguf",
-          "params": 1707657216,
-          "size_bytes": 1107457856,
-          "sha256": "902bde2522394954ac17821b3e5fd0df02defbc6944f122253f2580acf0503f4",
-          "min_ram_gb": 2.1,
-          "obs_tg": 25.5,
-          "min_app_version": "1.17.3"
-        },
-        {
           "model": "spark-x2.6-1.7b",
           "display_name": "Spark-X2.6 1.7B",
           "quant": "q4_k_m",
@@ -469,7 +450,7 @@
       ]
     },
     "high": {
-      "description": "8 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
+      "description": "7 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "gemma-3-4b",
@@ -559,19 +540,6 @@
           "obs_tg": 45.7
         },
         {
-          "model": "spark-x2.5-1.7b",
-          "display_name": "Spark-X2.5 1.7B",
-          "quant": "q4_k_m",
-          "hf_repo": "XHToken/Spark-X2.5-1.7B-GGUF",
-          "hf_filename": "Spark-X2.5-1.7B-Q4_K_M.gguf",
-          "params": 1707657216,
-          "size_bytes": 1107457856,
-          "sha256": "902bde2522394954ac17821b3e5fd0df02defbc6944f122253f2580acf0503f4",
-          "min_ram_gb": 2.1,
-          "obs_tg": 24.1,
-          "min_app_version": "1.17.3"
-        },
-        {
           "model": "spark-x2.6-1.7b",
           "display_name": "Spark-X2.6 1.7B",
           "quant": "q4_k_m",
@@ -586,7 +554,7 @@
       ]
     },
     "flagship": {
-      "description": "8 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
+      "description": "7 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "gemma-3-4b",
@@ -675,18 +643,6 @@
           "sha256": "8ccc5cd1f1b3602548715ae25a66ed73fd5dc68a210412eea643eb20eb75a135",
           "min_ram_gb": 1.8,
           "obs_tg": 85.6
-        },
-        {
-          "model": "spark-x2.5-4b",
-          "display_name": "Spark-X2.5 4B",
-          "quant": "q4_k_m",
-          "hf_repo": "XHToken/Spark-X2.5-4B-GGUF",
-          "hf_filename": "Spark-X2.5-4B-Q4_K_M.gguf",
-          "params": 4112079360,
-          "size_bytes": 2600224352,
-          "sha256": "adfcfa19a4ed6a5985da8bf565fe15f8e1a7e131d79bae2d19d48d1c40109428",
-          "min_ram_gb": 3.8,
-          "min_app_version": "1.17.3"
         },
         {
           "model": "spark-x2.6-4b",
