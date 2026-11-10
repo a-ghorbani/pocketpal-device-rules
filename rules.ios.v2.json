@@ -387,7 +387,7 @@
       ]
     },
     "mid": {
-      "description": "10 candidate(s); primary: smollm3-3b. Validated against community benchmarks.",
+      "description": "11 candidate(s); primary: smollm3-3b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "smollm3-3b",
@@ -537,11 +537,32 @@
             "sha256": "ac9934e8d7966d0d62442c202ec8fdad99a045dea79366c1a4a246a46f5c0533",
             "modalities": ["vision"]
           }
+        },
+        {
+          "model": "ternary-bonsai-2-4b",
+          "display_name": "Ternary Bonsai 2 4B",
+          "quant": "q2_0",
+          "hf_repo": "prism-ml/Ternary-Bonsai-2-4B-gguf",
+          "hf_filename": "Ternary-Bonsai-2-4B-Q2_0.gguf",
+          "params": 4205751296,
+          "size_bytes": 1212103520,
+          "sha256": "64a5183b44921bdb5ac4a6f5f92007821d6ebe5c66997d3c147fd214ab9433d4",
+          "min_ram_gb": 2.9,
+          "native_low_bit": true,
+          "min_app_version": "1.22.0",
+          "multimodal": true,
+          "mmproj": {
+            "hf_repo": "prism-ml/Ternary-Bonsai-2-4B-gguf",
+            "hf_filename": "Ternary-Bonsai-2-4B-mmproj-Q8_0.gguf",
+            "size_bytes": 366894624,
+            "sha256": "db939d5f9b7014137810205e91d05e5f54afd72b0b3af9d33bd7d82f7906a55d",
+            "modalities": ["vision"]
+          }
         }
       ]
     },
     "high": {
-      "description": "11 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
+      "description": "12 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "gemma-3-4b",
@@ -695,11 +716,32 @@
           "sha256": "7abd9859c10924be3c583945456fa9b25d0569484876105a7b7376f7938fffb7",
           "min_ram_gb": 2.8,
           "min_app_version": "1.17.3"
+        },
+        {
+          "model": "ternary-bonsai-2-4b",
+          "display_name": "Ternary Bonsai 2 4B",
+          "quant": "q2_0",
+          "hf_repo": "prism-ml/Ternary-Bonsai-2-4B-gguf",
+          "hf_filename": "Ternary-Bonsai-2-4B-Q2_0.gguf",
+          "params": 4205751296,
+          "size_bytes": 1212103520,
+          "sha256": "64a5183b44921bdb5ac4a6f5f92007821d6ebe5c66997d3c147fd214ab9433d4",
+          "min_ram_gb": 2.9,
+          "native_low_bit": true,
+          "min_app_version": "1.22.0",
+          "multimodal": true,
+          "mmproj": {
+            "hf_repo": "prism-ml/Ternary-Bonsai-2-4B-gguf",
+            "hf_filename": "Ternary-Bonsai-2-4B-mmproj-Q8_0.gguf",
+            "size_bytes": 366894624,
+            "sha256": "db939d5f9b7014137810205e91d05e5f54afd72b0b3af9d33bd7d82f7906a55d",
+            "modalities": ["vision"]
+          }
         }
       ]
     },
     "flagship": {
-      "description": "11 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
+      "description": "12 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "gemma-3-4b",
@@ -854,6 +896,27 @@
           "sha256": "91cb2811aebb47ac916aa619d27d4cdd7f4143106b7917accb8ead4cd7f5cbd9",
           "min_ram_gb": 4.8,
           "min_app_version": "1.17.3"
+        },
+        {
+          "model": "ternary-bonsai-2-4b",
+          "display_name": "Ternary Bonsai 2 4B",
+          "quant": "q2_0",
+          "hf_repo": "prism-ml/Ternary-Bonsai-2-4B-gguf",
+          "hf_filename": "Ternary-Bonsai-2-4B-Q2_0.gguf",
+          "params": 4205751296,
+          "size_bytes": 1212103520,
+          "sha256": "64a5183b44921bdb5ac4a6f5f92007821d6ebe5c66997d3c147fd214ab9433d4",
+          "min_ram_gb": 2.9,
+          "native_low_bit": true,
+          "min_app_version": "1.22.0",
+          "multimodal": true,
+          "mmproj": {
+            "hf_repo": "prism-ml/Ternary-Bonsai-2-4B-gguf",
+            "hf_filename": "Ternary-Bonsai-2-4B-mmproj-Q8_0.gguf",
+            "size_bytes": 366894624,
+            "sha256": "db939d5f9b7014137810205e91d05e5f54afd72b0b3af9d33bd7d82f7906a55d",
+            "modalities": ["vision"]
+          }
         }
       ]
     }

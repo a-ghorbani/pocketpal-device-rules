@@ -174,7 +174,7 @@ encoding — this reproduces the shipped lfm2-vl-1.6b value (2.5). Raw data and 
 | gemma-4-e4b / lfm2.5-8b-a1b / ministral-3-3b (Q4_0) | kept (flagship) | | | | | 16.8 / 49.5 / 22.8 | 3.0–5.4 |
 | nemotron-3.5-bolt-e4b (Q4_K_M) | not added: 5.8 GiB peak (LMK risk on 12 GiB), 14.5 tg, same niche as gemma-4-e4b | | | | | 14.5 | 5.78 |
 | ternary-bonsai-2-2b (Q2_0, native ternary) | **added** mid, gated 1.22.0 (+vision) | | 15.5 | 16.9 | 18.9 | | 1.10 |
-| ternary-bonsai-2-4b (Q2_0) | not added: below mid/high floors, flagship only (14.4) with pp ~22 | | 5.6 | 6.7 | 8.1 | 14.4 | 1.82 |
+| ternary-bonsai-2-4b (Q2_0) | **added** flagship, gated 1.22.0 (below mid/high floors; pp ~22) | | 5.6 | 6.7 | 8.1 | 14.4 | 1.82 |
 | ternary-bonsai-2-9b (Q2_0) | not added: below every floor | | | 3.6 | 4.4 | 7.1 | 3.15 |
 
 **Ternary-Bonsai-2** (prism-ml, 2026-09-23) is the successor of the removed Android Bonsai
@@ -204,7 +204,7 @@ Raw reports: `.../2026-11-06-list-refresh/ios/`.
 | control lfm2-2.6b (Q4_K_M) | 18.7 | 215 | 1906 | 2.2 (shipped 2.3) |
 | control qwen3-1.7b (Q4_K_M) | 25.0 | 373 | 1653 | 1.9 (shipped 2.0) |
 | ternary-bonsai-2-2b (Q2_0), gated 1.22.0 | 37.6 | 381 | 1059 | 2.0 (+projector) |
-| ternary-bonsai-2-4b / 9b (Q2_0) | 17.1 / 7.8 | 144 / 66 | 1835 / 3085 | not added (4B: 2B covers the family in mid; 9B below floor) |
+| ternary-bonsai-2-4b / 9b (Q2_0) | 17.1 / 7.8 | 144 / 66 | 1835 / 3085 | 4B **added** mid + high + flagship, gated 1.22.0 (2.9); 9B not added (below floor) |
 | tiny-aya-global (Q4_K_M), 1 run | 12.5 | 186 | 2814 | 3.2 |
 | granite-4.2-3b (Q4_K_M), 1 run | 13.5 | 166 | 2494 | 2.9 |
 
@@ -348,8 +348,7 @@ How models are chosen:
 
 - **iOS**: Ling-3.0-tiny (not checked on Metal); tiny-aya / granite high+flagship speeds are
   extrapolated. The vision projectors are not exercised by the bench on either platform.
-- **Ternary-Bonsai-2-4B on iOS** (17.1 tg on A15, clears mid/high) once a tier has room; retire
-  the iOS Q1_0 Bonsai entries in favour of Bonsai-2 when 1.22.0 is widely adopted.
+- Retire the iOS Q1_0 Bonsai entries in favour of Bonsai-2 when 1.22.0 is widely adopted.
 - **Stale `obs_tg`** on entries kept from the community data (e.g. Android gemma-4-e4b 6.5 vs
   16.8 measured on Myron, gemma-3-4b high 6.6 vs 10.7-11.7). Not touched in this refresh.
 - Vision `min_ram_gb` is estimated from LM peak + projector size; measure with an image loaded
