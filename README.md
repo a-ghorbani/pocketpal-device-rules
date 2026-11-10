@@ -159,10 +159,10 @@ encoding — this reproduces the shipped lfm2-vl-1.6b value (2.5). Raw data and 
 | lfm2.5-2.6b (QAD Q4_0) | **added** mid (replaces lfm2-2.6b) | | 12.6 | 18.6 | 20.4 | | 2.19 |
 | lfm2-2.6b (Q4_K_M) | removed (vendor-declared successor) | | 11.8 | | | | 2.04 |
 | lfm3-1.7b (QAD Q4_0) | **added** mid + high, gated 1.22.0 | | 18.6 | 26.8 | 28.1 | | 1.73 |
-| lfm3-vl-2b (QAD Q4_0) | **added** mid, gated 1.22.0 (replaces lfm2-vl-1.6b) | | 18.5 | | | | 1.66 |
+| lfm3-vl-2b (QAD Q4_0) | **added** mid + high, gated 1.22.0 (replaces lfm2-vl-1.6b); high speed = lfm3-1.7b (same LM) | | 18.5 | | | | 1.66 |
 | lfm2.5-vl-1.6b (Q4_0) | **added** mid, ungated successor of lfm2-vl-1.6b | | 28.2 | | | | 1.21 |
 | lfm2-vl-1.6b (Q4_0) | removed (superseded) | | 28.2 | | | | 1.21 |
-| lfm2.5-vl-3b (Q4_0) | **added** high | | | 18.8 | 20.5 | | 2.16 |
+| lfm2.5-vl-3b (Q4_0) | not added: lfm3-vl-2b is faster on high and scores higher on Liquid's 62-bench suite (57.6 vs 62.1 no-think) | | | 18.8 | 20.5 | | 2.16 |
 | tiny-aya-global (Q4_0) | **added** high + flagship (multilingual) | | | 12.5 | 13.2 | 24.0 | 3.02 |
 | granite-4.2-3b (Q4_0) | **added** high + flagship | | | 12.0 | 12.6 | 22.5 | 2.66 |
 | ling-3.0-tiny (Q4_0, 8B-A1B MoE) | **added** flagship, gated 1.17.2 | | | | | 44.1 | 4.64 |
@@ -211,8 +211,8 @@ Raw reports: `.../2026-11-06-list-refresh/ios/`.
 
 iOS changes: Spark-X2.5 removed; qwen3-1.7b removed from mid (qwen3.5-2b already there);
 qwen3-0.6b → qwen3.5-0.8b (low); lfm2-2.6b → lfm2.5-2.6b, + lfm3-1.7b and lfm3-vl-2b (gated
-1.22.0) + lfm2.5-vl-1.6b and ternary-bonsai-2-2b (gated 1.22.0) (mid); + lfm2.5-vl-450m (low) and lfm2.5-vl-3b (high), same `lfm2`
-arch/projector as the measured VL-1.6B, `min_ram_gb` = Android × 0.92. Bonsai stays on iOS
+1.22.0) + lfm2.5-vl-1.6b and ternary-bonsai-2-2b (gated 1.22.0) (mid); + lfm2.5-vl-450m (low), same `lfm2`
+arch/projector as the measured VL-1.6B, `min_ram_gb` = Android × 0.92; lfm3-vl-2b also in high (gated 1.22.0). Bonsai stays on iOS
 (Metal has the fast Q1_0 path). tiny-aya and granite (high + flagship): `cohere2` / `granite` load
 and run fully on Metal on the A15; their high/flagship speed is extrapolated with the chip-class
 scaling above (~17-19 tg on A16/A18, ~25-27 on A-Pro), not measured. Ling stays Android-only
