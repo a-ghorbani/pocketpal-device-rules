@@ -158,8 +158,8 @@ encoding — this reproduces the shipped lfm2-vl-1.6b value (2.5). Raw data and 
 | qwen3-1.7b (Q4_K_M) | removed (superseded) | | 14.5 | | | | 1.85 |
 | lfm2.5-2.6b (QAD Q4_0) | **added** mid (replaces lfm2-2.6b) | | 12.6 | 18.6 | 20.4 | | 2.19 |
 | lfm2-2.6b (Q4_K_M) | removed (vendor-declared successor) | | 11.8 | | | | 2.04 |
-| lfm3-1.7b (QAD Q4_0) | **added** mid + high, gated 1.22.0 | | 18.6 | 26.8 | 28.1 | | 1.73 |
-| lfm3-vl-2b (QAD Q4_0) | **added** mid + high, gated 1.22.0 (replaces lfm2-vl-1.6b); high speed = lfm3-1.7b (same LM) | | 18.5 | | | | 1.66 |
+| lfm3-1.7b (QAD Q4_0) | **added** mid + high + flagship, gated 1.22.0 | | 18.6 | 26.8 | 28.1 | | 1.73 |
+| lfm3-vl-2b (QAD Q4_0) | **added** mid + high + flagship, gated 1.22.0 (replaces lfm2-vl-1.6b); high speed = lfm3-1.7b (same LM) | | 18.5 | | | | 1.66 |
 | lfm2.5-vl-1.6b (Q4_0) | **added** mid, ungated successor of lfm2-vl-1.6b | | 28.2 | | | | 1.21 |
 | lfm2-vl-1.6b (Q4_0) | removed (superseded) | | 28.2 | | | | 1.21 |
 | lfm2.5-vl-3b (Q4_0) | not added: lfm3-vl-2b is faster on high and scores higher on Liquid's 62-bench suite (57.6 vs 62.1 no-think) | | | 18.8 | 20.5 | | 2.16 |
@@ -184,8 +184,7 @@ produce wrong output, so it is gated 1.22.0 (and in `GATED`). Output was checked
 (pp512 ~30 tok/s on the 2B vs 65-100 for qwen3.5-2b), so it ships as the last mid alternate.
 
 Also removed: **Spark-X2.5** everywhere (Spark-X2.6 covers the same tiers under the same 1.17.3
-gate) and **gemma-3-1b from Android flagship** (to stay within the 10-candidate cap; it stays in
-low/mid/high, and lfm2.5-8b-a1b is the fast option on flagship). Gated replacements keep their
+gate). Gated replacements keep their
 ungated predecessor-class model as fallback (lfm2.5-1.2b behind lfm3-1.7b, lfm2.5-vl-1.6b behind
 lfm3-vl-2b) while 1.22.0 is new.
 
@@ -205,14 +204,14 @@ Raw reports: `.../2026-11-06-list-refresh/ios/`.
 | control lfm2-2.6b (Q4_K_M) | 18.7 | 215 | 1906 | 2.2 (shipped 2.3) |
 | control qwen3-1.7b (Q4_K_M) | 25.0 | 373 | 1653 | 1.9 (shipped 2.0) |
 | ternary-bonsai-2-2b (Q2_0), gated 1.22.0 | 37.6 | 381 | 1059 | 2.0 (+projector) |
-| ternary-bonsai-2-4b / 9b (Q2_0) | 17.1 / 7.8 | 144 / 66 | 1835 / 3085 | not added (mid is at the 10 cap; 9B below floor) |
+| ternary-bonsai-2-4b / 9b (Q2_0) | 17.1 / 7.8 | 144 / 66 | 1835 / 3085 | not added (4B: 2B covers the family in mid; 9B below floor) |
 | tiny-aya-global (Q4_K_M), 1 run | 12.5 | 186 | 2814 | 3.2 |
 | granite-4.2-3b (Q4_K_M), 1 run | 13.5 | 166 | 2494 | 2.9 |
 
 iOS changes: Spark-X2.5 removed; qwen3-1.7b removed from mid (qwen3.5-2b already there);
 qwen3-0.6b → qwen3.5-0.8b (low); lfm2-2.6b → lfm2.5-2.6b, + lfm3-1.7b and lfm3-vl-2b (gated
 1.22.0) + lfm2.5-vl-1.6b and ternary-bonsai-2-2b (gated 1.22.0) (mid); + lfm2.5-vl-450m (low), same `lfm2`
-arch/projector as the measured VL-1.6B, `min_ram_gb` = Android × 0.92; lfm3-vl-2b also in high (gated 1.22.0). Bonsai stays on iOS
+arch/projector as the measured VL-1.6B, `min_ram_gb` = Android × 0.92; lfm3-1.7b and lfm3-vl-2b also in high and flagship (gated 1.22.0). Bonsai stays on iOS
 (Metal has the fast Q1_0 path). tiny-aya and granite (high + flagship): `cohere2` / `granite` load
 and run fully on Metal on the A15; their high/flagship speed is extrapolated with the chip-class
 scaling above (~17-19 tg on A16/A18, ~25-27 on A-Pro), not measured. Ling stays Android-only
@@ -294,7 +293,8 @@ How models are chosen:
   **Qwen3.5-2B** (multimodal), and the recent **LFM2.5-1.2B** / **LFM2-2.6B** (Liquid AI,
   on-device-first hybrid arch) so mid is a real, current selection — not just one 3B + one 1B.
   (Qwen3.5-2B is dropped from Android mid on memory — p90 peak 5.0GB > cap — but kept on iOS.)
-- **Max 10 candidates per tier** (v2 schema limit; ~6 remains the practical target). A cap, not a target: short tiers stay
+- **Max 15 candidates per tier** (v2 schema limit, raised from 10 on 2026-11-10; v1 stays at 10. The app
+  parses every candidate, so the cap is our own convention.) A cap, not a target: short tiers stay
   short (never padded with models that don't fit). The trim is diversity-preserving — it
   always keeps the top-ranked models (incl. the primary) plus a guaranteed fast/light
   option and a multimodal option, instead of truncating those (which live at the list tail).

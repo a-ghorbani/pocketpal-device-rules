@@ -32,7 +32,8 @@ CDN = "https://cdn.jsdelivr.net/gh/a-ghorbani/pocketpal-device-rules@main"
 HF = "https://huggingface.co"
 MMPROJ_RE = re.compile(r"mmproj.*\.gguf$", re.I)
 SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+$")
-CAP = 10
+CAP_V1 = 10  # v1 is frozen
+CAP_V2 = 15  # schema-only convention; the app parses every candidate (checked v1.17.0-v1.22.1)
 
 # Models whose GGUF architecture needs a minimum app version. They must be gated in v2 and must
 # NEVER appear in the frozen v1 files, which pre-gating clients (v1.16.0-v1.17.x) still read.
@@ -111,8 +112,9 @@ def check_invariants():
 
         for tier, block in doc["tiers"].items():
             cands = block["candidates"]
-            if len(cands) > CAP:
-                err(name, f"tier {tier} has {len(cands)} candidates (cap {CAP})")
+            cap = CAP_V2 if is_v2 else CAP_V1
+            if len(cands) > cap:
+                err(name, f"tier {tier} has {len(cands)} candidates (cap {cap})")
             keys = [(c["model"], c.get("quant")) for c in cands]
             dupes = {k for k in keys if keys.count(k) > 1}
             if dupes:

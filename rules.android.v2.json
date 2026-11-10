@@ -661,7 +661,7 @@
       ]
     },
     "flagship": {
-      "description": "10 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
+      "description": "13 candidate(s); primary: gemma-3-4b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "gemma-3-4b",
@@ -725,6 +725,38 @@
           "min_ram_gb": 6.3
         },
         {
+          "model": "lfm3-1.7b",
+          "display_name": "LFM3 1.7B",
+          "quant": "q4_0",
+          "hf_repo": "LiquidAI/LFM3-1.7B-GGUF",
+          "hf_filename": "LFM3-1.7B-QAD-Q4_0.gguf",
+          "params": 1728801600,
+          "size_bytes": 1049615680,
+          "sha256": "43a7d09a0e9cba91b63eb7052488b9564569bddfd65754d2e426465e572a7452",
+          "min_ram_gb": 2.1,
+          "min_app_version": "1.22.0"
+        },
+        {
+          "model": "lfm3-vl-2b",
+          "display_name": "LFM3-VL 2B",
+          "quant": "q4_0",
+          "hf_repo": "LiquidAI/LFM3-VL-2B-GGUF",
+          "hf_filename": "LFM3-VL-2B-QAD-Q4_0.gguf",
+          "params": 1728801600,
+          "size_bytes": 1049615648,
+          "sha256": "621c455376cb96a20891697deb9975c6fb47dd5ea98ed3ad1f3b7e8f24f0b1e6",
+          "min_ram_gb": 2.7,
+          "min_app_version": "1.22.0",
+          "multimodal": true,
+          "mmproj": {
+            "hf_repo": "LiquidAI/LFM3-VL-2B-GGUF",
+            "hf_filename": "mmproj-LFM3-VL-2B-Q8_0.gguf",
+            "size_bytes": 203031872,
+            "sha256": "c5c5b58d544a18da919172d2d0368090ea1a4a351b6feb7f8a326a264a5918ab",
+            "modalities": ["vision"]
+          }
+        },
+        {
           "model": "ministral-3-3b",
           "display_name": "Ministral 3 3B",
           "quant": "q4_0",
@@ -780,6 +812,18 @@
           "sha256": "c1a548fd60cfb5a46d6e5fd7635224dec473664c9320a656132106bf7ce23cfb",
           "min_ram_gb": 5.6,
           "min_app_version": "1.17.2"
+        },
+        {
+          "model": "gemma-3-1b",
+          "display_name": "Gemma 3 1B",
+          "quant": "q4_k_m",
+          "hf_repo": "ggml-org/gemma-3-1b-it-GGUF",
+          "hf_filename": "gemma-3-1b-it-Q4_K_M.gguf",
+          "params": 999885952,
+          "size_bytes": 806058240,
+          "sha256": "8ccc5cd1f1b3602548715ae25a66ed73fd5dc68a210412eea643eb20eb75a135",
+          "min_ram_gb": 2.0,
+          "obs_tg": 23.3
         },
         {
           "model": "spark-x2.6-4b",
