@@ -387,7 +387,7 @@
       ]
     },
     "mid": {
-      "description": "11 candidate(s); primary: smollm3-3b. Validated against community benchmarks.",
+      "description": "9 candidate(s); primary: smollm3-3b. Validated against community benchmarks.",
       "candidates": [
         {
           "model": "smollm3-3b",
@@ -422,18 +422,6 @@
           "sha256": "43a7d09a0e9cba91b63eb7052488b9564569bddfd65754d2e426465e572a7452",
           "min_ram_gb": 1.9,
           "min_app_version": "1.22.0"
-        },
-        {
-          "model": "lfm2.5-1.2b",
-          "display_name": "LFM2.5 1.2B",
-          "quant": "q4_k_m",
-          "hf_repo": "LiquidAI/LFM2.5-1.2B-Instruct-GGUF",
-          "hf_filename": "LFM2.5-1.2B-Instruct-Q4_K_M.gguf",
-          "params": 1170340608,
-          "size_bytes": 730895168,
-          "sha256": "b1b3de114215d9507409a662a501a631095a479a419584e8a2ded6304b19b4f5",
-          "min_ram_gb": 1.3,
-          "obs_tg": 54.9
         },
         {
           "model": "qwen3.5-2b",
@@ -471,25 +459,6 @@
             "hf_filename": "mmproj-LFM3-VL-2B-Q8_0.gguf",
             "size_bytes": 203031872,
             "sha256": "c5c5b58d544a18da919172d2d0368090ea1a4a351b6feb7f8a326a264a5918ab",
-            "modalities": ["vision"]
-          }
-        },
-        {
-          "model": "lfm2.5-vl-1.6b",
-          "display_name": "LFM2.5-VL 1.6B",
-          "quant": "q4_0",
-          "hf_repo": "LiquidAI/LFM2.5-VL-1.6B-GGUF",
-          "hf_filename": "LFM2.5-VL-1.6B-Q4_0.gguf",
-          "params": 1170340608,
-          "size_bytes": 695752480,
-          "sha256": "8186364a4e7c3ad30f6dd3d3b7a4e0074c77dd91eed6cad5d8be9090ce285804",
-          "min_ram_gb": 2.3,
-          "multimodal": true,
-          "mmproj": {
-            "hf_repo": "LiquidAI/LFM2.5-VL-1.6B-GGUF",
-            "hf_filename": "mmproj-LFM2.5-VL-1.6b-Q8_0.gguf",
-            "size_bytes": 583109888,
-            "sha256": "2ce89e610c56f3198ece2b86cf61743a08b9307279c89125eb2412ebb908689d",
             "modalities": ["vision"]
           }
         },
