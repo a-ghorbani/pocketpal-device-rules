@@ -6,7 +6,8 @@
     python3 tools/check_rules.py hf          # size_bytes / sha256 match Hugging Face (metadata only)
     python3 tools/check_rules.py urls        # every GGUF / projector / draft URL resolves
     python3 tools/check_rules.py cdn         # jsDelivr serves what main has (run after a merge+purge)
-    python3 tools/check_rules.py all         # schema + invariants (the offline ones)
+    python3 tools/check_rules.py matrix      # README tier matrix matches the v2 files
+    python3 tools/check_rules.py all         # schema + invariants + matrix (the offline ones)
 
 Why each exists:
   schema      - catches malformed entries before they reach a client.
@@ -17,6 +18,7 @@ Why each exists:
   urls        - upstream deletes files. `ggml-org/gemma-4-E4B-it-GGUF/...Q4_K_M.gguf` was deleted
                 2026-07-16 and iOS shipped a 404 for two months before anyone noticed.
   cdn         - a merge only reaches users once jsDelivr's @main cache is purged.
+  matrix      - the README tier matrix is generated from the v2 files (tools/render_matrix.py).
 """
 import json
 import re
@@ -240,13 +242,20 @@ def check_cdn():
                       f"a-ghorbani/pocketpal-device-rules@main/{name}")
 
 
-CHECKS = {"schema": check_schema, "invariants": check_invariants, "hf": check_hf,
+def check_matrix():
+    sys.path.insert(0, str(ROOT / "tools"))
+    import render_matrix
+    if render_matrix.is_stale():
+        err("README.md", "tier matrix is stale - run python3 tools/render_matrix.py")
+
+
+CHECKS = {"schema": check_schema, "invariants": check_invariants, "matrix": check_matrix, "hf": check_hf,
           "urls": check_urls, "cdn": check_cdn}
 
 if __name__ == "__main__":
     wanted = sys.argv[1:] or ["all"]
     if wanted == ["all"]:
-        wanted = ["schema", "invariants"]
+        wanted = ["schema", "invariants", "matrix"]
     for w in wanted:
         if w not in CHECKS:
             sys.exit(f"unknown check {w!r}; pick from {', '.join(CHECKS)} or 'all'")
