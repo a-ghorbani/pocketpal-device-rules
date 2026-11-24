@@ -173,7 +173,7 @@ encoding — this reproduces the shipped lfm2-vl-1.6b value (2.5). Raw data and 
 | qwen3.5-4b (Q4_0) | kept flagship-only (S23 still below the high floor) | | | **9.2** | 10.5 | 18.0 | 3.58 |
 | gemma-4-e4b / lfm2.5-8b-a1b / ministral-3-3b (Q4_0) | kept (flagship) | | | | | 16.8 / 49.5 / 22.8 | 3.0–5.4 |
 | nemotron-3.5-bolt-e4b (Q4_K_M) | not added: 5.8 GiB peak (LMK risk on 12 GiB), 14.5 tg, same niche as gemma-4-e4b | | | | | 14.5 | 5.78 |
-| ternary-bonsai-2-2b (Q2_0, native ternary) | **added** mid, gated 1.22.0 (+vision) | | 15.5 | 16.9 | 18.9 | | 1.10 |
+| ternary-bonsai-2-2b (Q2_0, native ternary) | **added** mid + high (Android), gated 1.22.0 (+vision) | | 15.5 | 16.9 | 18.9 | | 1.10 |
 | ternary-bonsai-2-4b (Q2_0) | **added** flagship, gated 1.22.0 (below mid/high floors; pp ~22) | | 5.6 | 6.7 | 8.1 | 14.4 | 1.82 |
 | ternary-bonsai-2-9b (Q2_0) | not added: below every floor | | | 3.6 | 4.4 | 7.1 | 3.15 |
 
@@ -181,7 +181,7 @@ encoding — this reproduces the shipped lfm2-vl-1.6b value (2.5). Raw data and 
 entries. Its Q2_0 files need the `prism.hadamard` runtime: app 1.17.0–1.20.x load them but
 produce wrong output, so it is gated 1.22.0 (and in `GATED`). Output was checked on v1.22.0 (iPhone
 13 Pro chat: "Paris", "Red, Yellow, Blue" on 2B/4B/9B). On Android CPU prompt processing is slow
-(pp512 ~30 tok/s on the 2B vs 65-100 for qwen3.5-2b), so it ships as the last mid alternate.
+(pp512 ~30 tok/s on the 2B vs 65-100 for qwen3.5-2b), so it ships as the last mid/high alternate.
 
 Also removed: **Spark-X2.5** everywhere (Spark-X2.6 covers the same tiers under the same 1.17.3
 gate). Gated replacements keep their
