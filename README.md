@@ -211,8 +211,9 @@ Raw reports: `.../2026-11-06-list-refresh/ios/`.
 iOS changes: Spark-X2.5 removed; qwen3-1.7b removed from mid (qwen3.5-2b already there);
 qwen3-0.6b → qwen3.5-0.8b (low); lfm2-2.6b → lfm2.5-2.6b, + lfm3-1.7b and lfm3-vl-2b (gated
 1.22.0) + ternary-bonsai-2-2b/4b (gated 1.22.0) (mid), lfm2.5-1.2b removed; + lfm2.5-vl-450m (low), same `lfm2`
-arch/projector as LFM2.5-VL-1.6B (measured, not shipped), `min_ram_gb` = Android × 0.92; lfm3-1.7b and lfm3-vl-2b also in high and flagship (gated 1.22.0). Bonsai stays on iOS
-(Metal has the fast Q1_0 path). tiny-aya and granite (high + flagship): `cohere2` / `granite` load
+arch/projector as LFM2.5-VL-1.6B (measured, not shipped), `min_ram_gb` = Android × 0.92; lfm3-1.7b and lfm3-vl-2b also in high and flagship (gated 1.22.0). Bonsai-8B Q1_0 is
+removed from high (Ternary-Bonsai-2-4B replaces it in mid/high/flagship); Bonsai-1.7B Q1_0 stays in
+low (Metal has the fast Q1_0 path, and no Bonsai-2 was measured on a low-tier iPhone). tiny-aya and granite (high + flagship): `cohere2` / `granite` load
 and run fully on Metal on the A15; their high/flagship speed is extrapolated with the chip-class
 scaling above (~17-19 tg on A16/A18, ~25-27 on A-Pro), not measured. Ling stays Android-only
 (4.6 GB file, not checked on Metal).
@@ -348,7 +349,7 @@ How models are chosen:
 
 - **iOS**: Ling-3.0-tiny (not checked on Metal); tiny-aya / granite high+flagship speeds are
   extrapolated. The vision projectors are not exercised by the bench on either platform.
-- Retire the iOS Q1_0 Bonsai entries in favour of Bonsai-2 when 1.22.0 is widely adopted.
+- Measure Ternary-Bonsai-2-2B on a low-tier iPhone; if it fits, it can replace iOS Bonsai-1.7B Q1_0 in low.
 - **Stale `obs_tg`** on entries kept from the community data (e.g. Android gemma-4-e4b 6.5 vs
   16.8 measured on Myron, gemma-3-4b high 6.6 vs 10.7-11.7). Not touched in this refresh.
 - Vision `min_ram_gb` is estimated from LM peak + projector size; measure with an image loaded
